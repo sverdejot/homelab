@@ -9,7 +9,7 @@
         system = "aarch64-linux"; 
         modules = [
           ./configuration.nix
-          ./virtualization.nix
+					./virtualization.nix
         ];
       };
     };
