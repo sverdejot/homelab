@@ -29,7 +29,7 @@ I'm currently testing the setup locally on my Macbook Air M2, using OrbStack bui
     ```
 4. Rebuild the Nix configuration
     ```
-    sudo nixos-rebuild switch
+    sudo nixos-rebuild switch --flake .#homelab
     ```
 
 Now you should be able to run `sudo kubectl get pods`
