@@ -44,9 +44,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
           - name: GF_SERVER_ROOT_URL
-            value: "http://raspberrypi.local/grafana"
-          - name: GF_SERVER_SERVE_FROM_SUB_PATH
-            value: "true"
+            value: "http://grafana.homelab"
           - name: GF_AUTH_ANONYMOUS_ENABLED
             value: "true"
           ports:
@@ -96,7 +94,7 @@ spec:
   selector:
     app: grafana
   sessionAffinity: None
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -108,10 +106,10 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: raspberrypi.local
+  - host: grafana.homelab
     http:
       paths:
-        - path: /grafana
+        - path: /
           pathType: Prefix
           backend:
             service:

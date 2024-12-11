@@ -5,5 +5,5 @@ app:
       app: dashboard
     ingressClassName: nginx
     hosts:
-      - raspberrypi.local
-    path: /dashboard
+      - dashboard.homelab
+    path: /
