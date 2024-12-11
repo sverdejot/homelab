@@ -1,0 +1,12 @@
+---
+persistentVolumeClaim:
+  enable: true
+ingress:
+  enabled: true
+  hosts:
+    - raspberrypi.local
+  path: /pihole
+  pathType: Prefix
+  ingressClassName: nginx
+serviceDns:
+  mixedService: true

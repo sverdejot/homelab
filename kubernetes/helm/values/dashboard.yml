@@ -1,0 +1,9 @@
+app:
+  ingress:
+    enabled: true
+    labels: 
+      app: dashboard
+    ingressClassName: nginx
+    hosts:
+      - raspberrypi.local
+    path: /dashboard

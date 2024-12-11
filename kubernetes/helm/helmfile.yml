@@ -1,0 +1,21 @@
+---
+repositories:
+  - name: kubernetes-dashboard
+    url: https://kubernetes.github.io/dashboard/
+  - name: mojo2600
+    url: https://mojo2600.github.io/pihole-kubernetes/
+---
+releases:
+  - name: dashboard
+    namespace: dashboard
+    chart: kubernetes-dashboard/kubernetes-dashboard
+    version: 7.10
+    values:
+      - ./values/dashboard.yml
+
+  - name: pihole
+    namespace: pihole-system
+    chart: mojo2600/pihole
+    version: 2.27.0
+    values:
+      - ./values/pihole.yml
