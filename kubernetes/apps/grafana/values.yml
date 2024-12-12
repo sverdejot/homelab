@@ -1,0 +1,33 @@
+---
+namespaceOverride: "grafana"
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hosts:
+    - grafana.homelab
+
+persistence:
+  enabled: true
+  size: 1Gi
+
+env:
+  GF_SERVER_ROOT_URL: "http://grafana.homelab"
+  GF_AUTH_ANONYMOUS_ENABLED: "true"
+
+grafana.ini:
+  paths:
+    data: /var/lib/grafana/
+    logs: /var/log/grafana
+    plugins: /var/lib/grafana/plugins
+    provisioning: /etc/grafana/provisioning
+  analytics:
+    check_for_updates: true
+  log:
+    mode: console
+  grafana_net:
+    url: https://grafana.net
+  server:
+    domain: "{{ if (and .Values.ingress.enabled .Values.ingress.hosts) }}{{ tpl (.Values.ingress.hosts | first) . }}{{ else }}''{{ end }}"
+  auth:
+    anonymous: true
+

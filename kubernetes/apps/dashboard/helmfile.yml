@@ -1,0 +1,17 @@
+---
+repositories:
+  - name: kubernetes-dashboard
+    url: https://kubernetes.github.io/dashboard/
+---
+releases:
+  # k9s is good but not enough
+  - name: dashboard
+    namespace: dashboard
+    chart: kubernetes-dashboard/kubernetes-dashboard
+    version: 7.10
+    values:
+      - ./values.yml
+    hooks:
+      - events: ["post-sync"]
+        command: kubectl
+        args: [ "apply", "-f", "serviceaccount.yml" ]
