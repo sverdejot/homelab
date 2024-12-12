@@ -1,0 +1,12 @@
+---
+repositories:
+  - name: gitea-charts
+    url: https://dl.gitea.com/charts/
+---
+releases:
+  - name: gitea
+    namespace: gitea
+    chart: gitea-charts/gitea
+    version: ~10.6
+    values:
+      - ./values.yml
