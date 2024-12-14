@@ -22,7 +22,9 @@
     role = "server";
 		extraFlags = toString ([
 			# need to define here the token for other nodes to be able to register
+			"--tls-san=raspberrypi.local"
 			"--disable=traefik"
+			"--disable=servicelb"
 		]);
   };
 
