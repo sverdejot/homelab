@@ -1,0 +1,13 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tls-certificate
+  namespace: cert-manager
+spec:
+  secretName: tls-certificate
+  issuerRef:
+    name: certificate-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.homelab.local"

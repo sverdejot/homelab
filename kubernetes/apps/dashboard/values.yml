@@ -5,5 +5,5 @@ app:
       app: dashboard
     ingressClassName: nginx
     hosts:
-      - dashboard.homelab
+      - dashboard.homelab.local
     path: /

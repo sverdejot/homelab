@@ -2,16 +2,18 @@
 namespaceOverride: "grafana"
 ingress:
   enabled: true
+  annotation:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
   ingressClassName: nginx
   hosts:
-    - grafana.homelab
+    - grafana.homelab.local
 
 persistence:
   enabled: true
   size: 1Gi
 
 env:
-  GF_SERVER_ROOT_URL: "http://grafana.homelab"
+  GF_SERVER_ROOT_URL: "http://grafana.homelab.local"
   GF_AUTH_ANONYMOUS_ENABLED: "true"
 
 grafana.ini:

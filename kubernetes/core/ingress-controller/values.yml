@@ -6,3 +6,5 @@ controller:
     controllerValue: "k8s.io/ingress-nginx"
     parameters: {}
   ingressClass: nginx
+  extraArgs:
+    default-ssl-certificate: cert-manager/tls-certificate
