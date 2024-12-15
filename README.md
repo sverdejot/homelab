@@ -15,6 +15,7 @@ Lightweight, reproducible and easy-to-scale homelab K8s cluster built using [**R
 - `sops` for secrets encrypt and decrypt operations (and safely store them in repo)
 - `metallb` as bare-bone K8s LoadBalancer implementation
 - `pihole` as DNS manager for local network (including `external-dns` for automatical DNS registration from ingresses hosts)
+- `cnpg` as main shared db cluster for all apps & services
 
 ## Getting Started
 

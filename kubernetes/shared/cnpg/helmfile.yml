@@ -1,0 +1,19 @@
+---
+repositories:
+  - name: cnpg
+    url: https://cloudnative-pg.github.io/charts
+---
+releases:
+  # Install operatos
+  - name: cnpg
+    namespace: cnpg-system
+    chart: cnpg/cloudnative-pg
+
+  # Deploy cluster with default values
+  - name: postgres-cluster
+    namespace: postgres
+    chart: cnpg/cluster
+    needs:
+      - cnpg
+    values:
+      - ./values.yml
