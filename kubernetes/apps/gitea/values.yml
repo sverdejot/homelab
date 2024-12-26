@@ -11,6 +11,11 @@ postgresql-ha:
 persistence:
   enabled: true
 
+actions:
+  enabled: true
+  provisioning:
+    enabled: true
+
 gitea:
   config:
     database:
@@ -23,6 +28,7 @@ ingress:
   enabled: true
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "512m"
   className: nginx
   hosts:
     - host: git.homelab.local
