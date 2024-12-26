@@ -8,7 +8,7 @@ releases:
   - name: metallb
     chart: metallb/metallb
     namespace: metallb-system
-    version: 0.14.8
+    version: 0.14.9
     hooks:
       - events: ["post-sync"]
         command: kubectl
