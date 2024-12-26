@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: maybe-db-auth
+    namespace: maybe
+    labels:
+        app: maybe
+        cnpg.io/reloaad: "true"
+stringData:
+    username: ENC[AES256_GCM,data:bNSoVIA=,iv:HeJc2s/fXwRu8N7/2cOBNQnVK8c7AGniyYsWuxUh+Us=,tag:w8hENzHDGhxtWoSq108YoA==,type:str]
+    password: ENC[AES256_GCM,data:cHya9bVsOHRKPuYYczs=,iv:OUJC/BeRQVhb7q2dOmaUZL49iefjJnCCBEaBw5UVp2o=,tag:8ja30sIiDUb97JaJY759PA==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBmSS84cnFrcFVLV0F6Yitw
+            Q2tVdHJrNkhBZVE0aDkzTjVLY1V5Uk00aGpnCmhFblNGdGZ1WTMyZ2pGVDNTWThr
+            YjVybkk2N2xrT2JSQzJJTll2K0ErM0EKLS0tIHpwd2tZb0RiSFRMR2tqa2g3MkRq
+            Y2JZWHJlQVR4bHNIelVPV1F0ODFxQmsK1NDwqSGqU2tI7AI6mjwcctYGfdJMnMNa
+            hsTLkzk3WrT7CsYlMP2YSusn5K3DOk/VWD28muIsh93NNrQlnRcRfQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-12-26T14:36:28Z"
+    mac: ENC[AES256_GCM,data:hVplCcZk9EEj68Vsx2m2C7Xv1sP5VG0iLhoinEmoH94WKufj2QwAm7p6nugBNtAbFf4sxifhGfOc0ZwmrGMlg/P8xCtb2nJ1kePh5EEr2Nd/ivS1Q4Uj2RrwSJ2RZgqihp/1g7xJwyMdag9YXym598inBJOstiq8p1zMLXWj5jw=,iv:o85beOBXLilgwQhdqD1BZlQ9Rz9w67t1JL6pRW42cls=,tag:xGqCJ2Hw/XvMKLktqCSvaQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2

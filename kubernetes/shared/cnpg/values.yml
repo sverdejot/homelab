@@ -2,7 +2,15 @@
 cluster:
   instances: 1
   storage:
-    size: 1Gi
-
+    size: 8Gi
+  roles:
+    - name: maybe
+      ensure: present
+      comment: Maybe - Financial app
+      login: true
+      createdb: true
+      superuser: false
+      passwordSecret:
+        name: maybe/maybe-db-auth
   monitoring:
     enabled: true

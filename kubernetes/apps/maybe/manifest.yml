@@ -1,0 +1,95 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: maybe
+  labels:
+    name: maybe
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maybe
+  namespace: maybe
+  labels:
+    app: maybe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: maybe
+  template:
+    metadata:
+      labels:
+        app: maybe
+    spec:
+      containers:
+      - name: maybe
+        image: ghcr.io/maybe-finance/maybe:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: "SELF_HOSTED"
+          value: "true"
+        - name: "RAILS_FORCE_SSL"
+          value: "false"
+        - name: "RAILS_ASSUME_SSL"
+          value: "false"
+        - name: "GOOD_JOB_EXECUTION_MODE"
+          value: "async"
+        - name: "SECRET_KEY_BASE"
+          valueFrom:
+            secretKeyRef:
+              name: maybe-secret
+              key: secret
+        - name: "DB_HOST"
+          value: "postgres-cluster-rw.postgres"
+        - name: "POSTGRES_DB"
+          value: "maybe"
+        - name: "POSTGRES_USER"
+          valueFrom:
+            secretKeyRef:
+              name: maybe-db-auth
+              key: username
+        - name: "POSTGRES_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              name: maybe-db-auth
+              key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: maybe-svc
+  namespace: maybe
+  labels:
+    app: maybe
+spec: 
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000
+  selector:
+    app: maybe
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: maybe-ingress
+  namespace: maybe
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: finance.homelab.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: maybe-svc
+            port:
+              number: 80
