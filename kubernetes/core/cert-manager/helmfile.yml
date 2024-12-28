@@ -10,3 +10,8 @@ releases:
     version: ~1.16
     values:
       - ./values.yml
+
+  - name: trust-manager
+    namespace: cert-manager
+    chart: jetstack/trust-manager
+    version: ~0.14
