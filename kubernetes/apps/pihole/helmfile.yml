@@ -13,6 +13,10 @@ releases:
     version: 2.27.0
     values:
       - ./values/pihole.yml
+    hooks:
+      - events: ["post-sync"]
+        command: kubectl
+        args: [ "apply", "-f", "coredns-ns.yml" ]
 
   # Auto-sync ingresses with local DNS provider
   - name: externaldns-pihole
