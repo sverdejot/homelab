@@ -1,0 +1,30 @@
+---
+repositories:
+  - name: linkerd-edge 
+    url: https://helm.linkerd.io/edge
+---
+releases:
+  - name: linkerd-crds
+    namespace: linkerd
+    chart: linkerd-edge/linkerd-crds
+    # cert-manager and trust-manager needs to be installed before
+    # linkerd so it can generate all the needed CA and resources
+    # as helm does not allow to have needs between different files
+    # I'll leave this as a comment but take that into account when
+    # spinning this up
+    #
+    # needs:
+    #  - cert-manager/cert-manager
+    #  - cert-manager/trust-manager
+    hooks:
+      - events: ["presync"]
+        command: kubectl
+        args: [ "apply", "-f", "mtls.yml" ]
+
+  - name: linkerd-control-plane
+    namespace: linkerd
+    needs:
+      - linkerd/linkerd-crds
+    chart: linkerd-edge/linkerd-control-plane
+    values:
+      - ./values.yml
