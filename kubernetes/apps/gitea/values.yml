@@ -15,10 +15,19 @@ actions:
   enabled: true
   statefulset:
     actRunner:
+      # same image but with my custom CA cert installed, found no other way to
+      # do it (base image does not run update-ca-certificates so certs cannot just
+      # be added to the container)
+      #
+      # image is pushed to docker hub btw, tried to use my private registry
+      # but it requires login (which is not possible using gitea/act_runner)
+      #
+      # gonna be trying to point this image to the registry k8s svc inside the cluster
+      # since the auth is handled at nginx
       config: |
         runner:
           labels:
-            - "ubuntu-latest:docker://catthehacker/ubuntu:act-latest"
+            - "ubuntu-latest:docker://sverdejot/act:v0.1.0"
   provisioning:
     enabled: true
 
