@@ -1,0 +1,27 @@
+apiVersion: v1
+data:
+    auth: ENC[AES256_GCM,data:Z0w3Atqyv0bBrOKjlEFR/YZt006FTDCp3v/hCLF0IVuRhhCSjOMgPrxQKohIJvzM5tfmsmWC2qdxwkmZk+b/vA==,iv:DL2SsCWIlR3t6kdtaBt+/8027TN7SiOjQGbmRlyhfvw=,tag:vvi1K6wceXZEU1Ma4VySzg==,type:str]
+kind: Secret
+metadata:
+    namespace: registry
+    name: registry-auth
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBlcjRzYnY5SGZxYzVoWDdm
+            NTRNMk1JcEtWYVROSkVzbEdZdmF4ZCtOMVF3Cjc0Z3JMa0FLSDUxYzNHNS9LMUFH
+            NklwQ0dXK1JnVzZXV2E4bUIxVkVTM2cKLS0tIGdXZnFJRVpPWGhwcFNWRXRneC9m
+            bGlJV0xXazdwYmVQdUJZaC9uRlNMUjAK6IhGi/iIT2hMqz9wYTum71HAA72NHAXF
+            GccMQFHUzDqoV6MAs6DDlruZgobYlgb9uzNr5vAGC4TYXYFfRSLK7Q==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-12-29T15:12:11Z"
+    mac: ENC[AES256_GCM,data:ZSrO+dHxJjOqGIGvKIXOouvSMvJ7r8rolKbjt1p8P0xHogzAuaIXih4hTz8FN1FHXpPIfLRmJDZQZsS/BAGYbpQmAWCGs63Ck45oXClgPAFX8RzkIUQSUo1atyVxktnez6XsRB8f1nBgGNYmMU89cl1JsKPZozNUzpxyhaKNEjk=,iv:YCIH805wWuIcDnKZc5qbjwAj6B2lReDB2/phG58iHzA=,tag:SqsHdkXwxC66AYA80zVHKw==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2
