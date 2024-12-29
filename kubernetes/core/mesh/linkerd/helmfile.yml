@@ -28,3 +28,9 @@ releases:
     chart: linkerd-edge/linkerd-control-plane
     values:
       - ./values.yml
+
+  - name: linkerd-viz
+    namespace: linkerd
+    needs:
+      - linkerd/linkerd-control-plane
+    chart: linkerd-edge/linkerd-viz
