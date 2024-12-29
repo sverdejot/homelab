@@ -1,0 +1,13 @@
+---
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: custom-ca-bundle
+spec:
+  sources:
+  - secret:
+      name: "ca-certificate"
+      key: "tls.crt"
+  target:
+    configMap:
+      key: "ca-bundle.crt"
