@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: n8n-db-auth
+    namespace: n8n
+    labels:
+        app: n8n
+        cnpg.io/reload: "true"
+stringData:
+    username: ENC[AES256_GCM,data:DXwf,iv:jGe3ZBDYtn6n6Til0U6OASmb6Z9flBKE7HCLbgKusZQ=,tag:Zj6uztqTvXQIH565QEPvuQ==,type:str]
+    password: ENC[AES256_GCM,data:n3RbEd9hSL+gllUu,iv:1Hd7F+7qtvyGRcsZEZfOnBFJxEPMK7OVJIj330ydtKg=,tag:1jezdX4/L+zofq1jQ+DFMQ==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBQc0dxSU9IaVB0bjRlU1ZP
+            Q29MUTQ3VnJscDhaOE1pQ2FUWVFRa2NaeWpnCkNOcWJaaUh3NFgwNVd5Z3ppZlNi
+            cGJ4dzhjQmo0RXdtQ2oyZnc3dXBQNGMKLS0tIEJCUk5iVE1jMXdjK2R2aTNCbmhW
+            UlhqWVY3TUN5VDUycjZUOFVYbUh6YjAKkLL1AHqyE3MvtCxvMzAiZDYL/+Dx/pOT
+            rfxj/I6W6LdazOPs6yXp1nLNrZ3iz6n92nilcvbWfOw2VcXDf43jyA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-01-03T18:42:08Z"
+    mac: ENC[AES256_GCM,data:AXwXHscywJGHlDvthv3MYdyNZ8nTcf7lx4OTX+h6IcDyMG4o4mf55rzSlf6VazLeW4SFqz56pQYOmuYPC2/qVct5dT1xaDlAd8umntEGmNcZRa3DgKj6ST5NhtbWh70QyoBLapLJc0jMCqwOJVtjphSN5YSnqAeWao8VweVJrVA=,iv:DFCjv6ErF67A5u0VKHSn6uH1JbB9b9qKZEXRuU/DZoM=,tag:WXN3SLxLLeM1gnM9rnaQMA==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2
