@@ -11,6 +11,14 @@ cluster:
       createdb: true
       superuser: false
       passwordSecret:
-        name: maybe/maybe-db-auth
+        name: maybe
+    - name: n8n
+      ensure: present
+      coment: n8n - Workflow automation
+      login: true
+      createdb: true
+      superuser: false
+      passwordSecret:
+        name: n8n
   monitoring:
-    enabled: true
+    enabled: false

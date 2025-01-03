@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: maybe
+    namespace: postgres
+    labels:
+        app: maybe
+        cnpg.io/reload: "true"
+stringData:
+    username: ENC[AES256_GCM,data:zI1yspA=,iv:l5jpQfuhLfUEXLlm9fgowZ2ep9khXB9nu+1nr5CoX6g=,tag:6NanpTPNiYwhdg4fCn7Ssg==,type:str]
+    password: ENC[AES256_GCM,data:q1b2vEE8cwr5piTkzeQ=,iv:/7xNo+RlK20cBtmCsfbWMYKb+LU+JNG1pNOZn0FktsU=,tag:FOkzyi2wBFOsnogooQ4j8A==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrbC82Z3plZjBRVWdvQzZ2
+            V3Mzcjh0NjJGdktVNk5SRWdLYUphVmMvSDNvCmh2cDdzMWZnQm50cHNNYjVIaGov
+            blRSbklzSW56SFBVdlBOZnBsYVV1eVkKLS0tIHVhWG5OM0VrWTRtYjVpMEVRRnVB
+            b2svTkRGTnNkR1oyUFB2NHBWM1p1RUUKzYd/Hi78wArMjkx6W91yQj5UaCtjEiJK
+            kptZX0AdHmYBf4TjLBqRLZh0Ffr/2vyfXCewmL2n4F/AW2gWceCv4w==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-01-03T15:22:00Z"
+    mac: ENC[AES256_GCM,data:qNmLD0VCBUvsO+mb/KALJ60SXwtFpb+IhUodAIPBR6FrSCpUnV0pdnXhzoK2Yd1EdE+b2Qw35Y5rNrPtgAgerW8JQKo0PfnjnmrxF2VPtq1gnjy5QWu4KLFDx2RL2Brmhw0ldf+SY5CDLJ2n9NWZGrnvZybGMSlA7UdZh0vH0JA=,iv:XFtYooP8Unygnb42DkL3/ENKWQOugxnEg2ewz9VLTrY=,tag:5ynq7jR7kB2IuIM7lgHnaA==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2
