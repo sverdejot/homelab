@@ -10,6 +10,8 @@ postgresql-ha:
 
 persistence:
   enabled: true
+  accessModes:
+    - ReadWriteMany
 
 actions:
   enabled: true
