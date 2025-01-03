@@ -13,7 +13,7 @@ persistence:
   size: 1Gi
 
 env:
-  GF_SERVER_ROOT_URL: "http://grafana.homelab.local"
+  GF_SERVER_ROOT_URL: "https://grafana.homelab.local"
   GF_AUTH_ANONYMOUS_ENABLED: "true"
   GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
 
