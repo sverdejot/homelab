@@ -7,3 +7,6 @@ app:
     hosts:
       - dashboard.homelab.local
     path: /
+    tls:
+      # already having tls on the ingress-controller
+      enabled: false
