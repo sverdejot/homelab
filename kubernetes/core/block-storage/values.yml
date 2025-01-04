@@ -1,0 +1,7 @@
+longhornUI:
+  replicas: 1
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: longhorn.homelab.local

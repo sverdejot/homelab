@@ -7,3 +7,5 @@ releases:
   - name: longhorn
     namespace: longhorn-system
     chart: longhorn/longhorn
+    values:
+      - ./values.yml
