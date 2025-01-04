@@ -1,0 +1,16 @@
+global:
+  domain: argo.homelab.local
+  addPrometheusAnnotations: true
+
+configs:
+  params:
+    # tls already handled by ingress
+    server.insecure: true
+
+server:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hostname: argo.homelab.local
+    annotations:
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
