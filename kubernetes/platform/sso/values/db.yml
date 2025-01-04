@@ -1,0 +1,16 @@
+---
+cluster:
+  instances: 1
+  storage:
+    size: 2Gi
+  roles:
+    - name: authentik
+      ensure: present
+      comment: Authentik - SSO
+      login: true
+      createdb: true
+      superuser: false
+      passwordSecret:
+        name: authentik-db-auth
+  monitoring:
+    enabled: false

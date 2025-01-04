@@ -1,0 +1,29 @@
+---
+repositories:
+  - name: cnpg
+    url: https://cloudnative-pg.github.io/charts
+  - name: authentik
+    url: https://charts.goauthentik.io
+---
+releases:
+  - name: db
+    namespace: authentik
+    chart: cnpg/cluster
+    values:
+      - ./values/db.yml
+
+  # TODO: set client TLS for db connection
+  - name: authentik
+    namespace: authentik
+    chart: authentik/authentik
+    values:
+      - ./values/authentik.yml
+    hooks:
+      - events:
+          - prepare
+        showlogs: true
+        command: "kubectl"
+        args:
+          - apply
+          - -f
+          - resources/db.yml

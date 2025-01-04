@@ -1,0 +1,45 @@
+authentik:
+  postgresql:
+    host: db-cluster-rw.authentik
+    user: file:///postgres-creds/username
+    password: file:///postgres-creds/password
+
+redis:
+  enabled: true
+
+server:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - idp.homelab.local
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secret-key
+          key: secretkey
+  volumes:
+    - name: postgres-creds
+      secret:
+        secretName: authentik-db-auth
+  volumeMounts:
+    - name: postgres-creds
+      mountPath: /postgres-creds
+      readOnly: true
+
+worker:
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secret-key
+          key: secretkey
+  volumes:
+    - name: postgres-creds
+      secret:
+        secretName: authentik-db-auth
+  volumeMounts:
+    - name: postgres-creds
+      mountPath: /postgres-creds
+      readOnly: true
