@@ -117,4 +117,6 @@ sops --encrypt --age $(awk -F "public key: " '{print $2}' $SOPS_AGE_KEY_FILE) --
 sops --decrypt --age $(awk -F "public key: " '{print $2}' $SOPS_AGE_KEY_FILE) --encrypted-regex '^(data|stringData)$' path/to/secret.yml | kubectl apply -f -
 ```
 
-##
+## Known issues
+
+Some deployments are not fully automated (e.g. `Authentik`). Usually, secrets needs to be manually applied first and then deploy any chart/manifest that depends on them. Pending to automate all Helm-managed deployments using hooks (but in a declarative way)
