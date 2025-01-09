@@ -1,5 +1,7 @@
 # Homelab: Kubernetes Cluster with K3s on NixOS
 
+![Raspberry Pi Cluster](assets/img/cabinet.png)
+
 Lightweight, reproducible and easy-to-scale homelab K8s cluster built using [**Raspberry Pi** devices](https://www.raspberrypi.com/products/raspberry-pi-5/).
 
 ## Features
@@ -14,7 +16,7 @@ Lightweight, reproducible and easy-to-scale homelab K8s cluster built using [**R
 - `cert-manager` with self-signed TLS (using a generated CA for local network)
 - `sops` for secrets encrypt and decrypt operations (and safely store them in repo)
 - `metallb` as bare-bone K8s LoadBalancer implementation
-- `pihole` as DNS manager for local network (including `external-dns` for automatical DNS registration from ingresses hosts)
+- `pihole` as DNS manager for local network (including `external-dns` for automatic DNS registration from ingresses hosts)
 - `cnpg` as main shared db cluster for all apps & services
 
 ## Getting Started
@@ -44,7 +46,7 @@ Now you should be able to run `sudo kubectl get pods`
 
 ## TLS
 
-SSL is managed using a self-signed certificate issued from `cert-manager`, using a CA generated on the fly. To proceed with this:
+SSL is managed using a self-signed certificate issued from `cert-manager`, using a custom CA:
 
 1. Generate your own custom CA:
 
@@ -77,7 +79,7 @@ data:
   tls.crt: # your b64-encoded cert
 ```
 
-4. At this point, you can just apply the secret to your cluster and then encrypt it to safely push to remote repository, or you can first decrypt it and pipe the result to `kubectl apply`
+4. Now you can just apply the secret to your cluster and then encrypt it to safely push to remote repository, or you can first decrypt it and pipe the result to `kubectl apply`
 
 ## Encrypt secrets using `SOPS` and `age`
 
@@ -114,3 +116,5 @@ sops --encrypt --age $(awk -F "public key: " '{print $2}' $SOPS_AGE_KEY_FILE) --
 # Decrypt the secret and pipe the result to kubectl
 sops --decrypt --age $(awk -F "public key: " '{print $2}' $SOPS_AGE_KEY_FILE) --encrypted-regex '^(data|stringData)$' path/to/secret.yml | kubectl apply -f -
 ```
+
+##
