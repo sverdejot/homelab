@@ -29,7 +29,7 @@ actions:
       config: |
         runner:
           labels:
-            - "ubuntu-latest:docker://sverdejot/act:v0.1.0"
+            - "ubuntu-latest:docker://sverdejot/act:latest"
   provisioning:
     enabled: true
 
