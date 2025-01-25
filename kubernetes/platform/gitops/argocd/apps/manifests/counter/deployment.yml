@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counter
+  namespace: counter
+  labels:
+    name: counter-deployment
+    app: counter
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: counter
+  template:
+    metadata:
+      labels:
+        app: counter
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: counter
+          image: registry.homelab.local/sverdejot/counter:v0.1.0
+          ports:
+            - containerPort: 8080
+      imagePullSecrets: 
+      - name: auth

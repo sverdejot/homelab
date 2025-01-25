@@ -1,0 +1,35 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: applicationset-custom
+  namespace: argocd
+  labels:
+    app: argocd
+spec:
+  generators:
+  - git:
+      # TODO: through ssh i.o. http
+      repoURL: http://gitea-http.gitea:3000/sverdejot/homelab
+      revision: HEAD
+      directories:
+      - path: kubernetes/platform/gitops/argocd/apps/manifests/*
+  template:
+    metadata:
+      name: '{{path.basename}}-application'
+      namespace: argocd
+    spec:
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+      project: default
+      source:
+        repoURL: http://gitea-http.gitea:3000/sverdejot/homelab
+        targetRevision: HEAD
+        path: kubernetes/platform/gitops/argocd/apps/manifests/{{path.basename}}
+        directory:
+          recurse: true
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
