@@ -1,8 +1,0 @@
----
-apiVersion: v1
-metadata:
-  name: counter
-  labels:
-    app: counter
-    name: counter
-kind: Namespace

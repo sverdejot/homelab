@@ -8,15 +8,14 @@ metadata:
     app: argocd
 spec:
   generators:
-  - git:
-      # TODO: through ssh i.o. http
-      repoURL: http://gitea-http.gitea:3000/sverdejot/homelab
-      revision: HEAD
-      directories:
-      - path: kubernetes/platform/gitops/argocd/apps/manifests/*
+  - scmProvider:
+      gitea:
+        owner: homelab
+        api: https://git.homelab.local/
+        insecure: true
   template:
     metadata:
-      name: '{{path.basename}}-application'
+      name: '{{repository}}-application'
       namespace: argocd
     spec:
       syncPolicy:
@@ -25,11 +24,11 @@ spec:
           selfHeal: true
       project: default
       source:
-        repoURL: http://gitea-http.gitea:3000/sverdejot/homelab
+        repoURL: http://gitea-http.gitea:3000/homelab/{{repository}}
         targetRevision: HEAD
-        path: kubernetes/platform/gitops/argocd/apps/manifests/{{path.basename}}
+        path: manifests
         directory:
           recurse: true
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{path.basename}}'
+        namespace: '{{repository}}'
