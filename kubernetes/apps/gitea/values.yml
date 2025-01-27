@@ -16,7 +16,10 @@ persistence:
 actions:
   enabled: true
   statefulset:
+    dind:
+      tag: dind
     actRunner:
+      tag: nightly
       # same image but with my custom CA cert installed, found no other way to
       # do it (base image does not run update-ca-certificates so certs cannot just
       # be added to the container)
@@ -27,9 +30,12 @@ actions:
       # gonna be trying to point this image to the registry k8s svc inside the cluster
       # since the auth is handled at nginx
       config: |
+        container:
+          privileged: true
         runner:
           labels:
             - "ubuntu-latest:docker://sverdejot/act:latest"
+
   provisioning:
     enabled: true
 
