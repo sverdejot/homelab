@@ -1,0 +1,30 @@
+global:
+  edition: ce
+  hosts:
+    domain: homelab.local
+
+  certificates:
+    customCAs:
+    - configMap: custom-ca-bundle
+
+  time_zone: Europe/Madrid
+
+  ingress:
+    configureCertmanager: false
+
+  kas:
+    enabled: false
+
+certmanager:
+  install: false
+
+nginx-ingress:
+  enabled: false
+
+upgradeCheck:
+  enabled: true
+
+minio:
+  imageTag: RELEASE.2025-01-20T14-49-07Z
+  minioMc:
+    tag: RELEASE.2025-01-17T23-25-50Z

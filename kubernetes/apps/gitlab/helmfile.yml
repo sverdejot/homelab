@@ -1,0 +1,12 @@
+---
+repositories:
+  - name: gitlab
+    url: https://charts.gitlab.io
+---
+releases:
+  - name: gitlab
+    namespace: gitlab
+    chart: gitlab/gitlab
+    version: ~8.8
+    values:
+      - ./values.yml
