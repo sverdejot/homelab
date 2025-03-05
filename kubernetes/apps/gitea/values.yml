@@ -16,22 +16,28 @@ persistence:
 actions:
   enabled: true
   statefulset:
+    extraVolumes:
+      - name: custom-ca-bundle
+        configMap: 
+          name: custom-ca-bundle
     dind:
       tag: dind
+      extraVolumeMounts:
+        - name: custom-ca-bundle
+          mountPath: /etc/docker/certs.d/registry.homelab.local
+          readOnly: true
     actRunner:
-      tag: nightly
-      # same image but with my custom CA cert installed, found no other way to
-      # do it (base image does not run update-ca-certificates so certs cannot just
-      # be added to the container)
-      #
-      # image is pushed to docker hub btw, tried to use my private registry
-      # but it requires login (which is not possible using gitea/act_runner)
-      #
-      # gonna be trying to point this image to the registry k8s svc inside the cluster
-      # since the auth is handled at nginx
+      extraVolumeMounts:
+        - name: custom-ca-bundle
+          mountPath: /etc/docker/certs.d/registry.homelab.local
+          readOnly: true
       config: |
         container:
           privileged: true
+          network: "host"
+          options: "-v /certs:/certs --env DOCKER_TLS_VERIFY=1 --env DOCKER_CERT_PATH=/certs/server --env DOCKER_HOST=tcp://127.0.0.1:2376"
+          valid_volumes:
+            - '**'
         runner:
           labels:
             - "ubuntu-latest:docker://sverdejot/act:latest"
