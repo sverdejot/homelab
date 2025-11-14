@@ -2,15 +2,15 @@
 repositories:
   - name: mojo2600
     url: https://mojo2600.github.io/pihole-kubernetes/
-  - name: bitnami
-    url: https://charts.bitnami.com/bitnami
+  - name: kubernetes-sigs
+    url: https://kubernetes-sigs.github.io/external-dns/
 ---
 releases:
   # internal DNS + no more ads
   - name: pihole
     namespace: pihole-system
     chart: mojo2600/pihole
-    version: 2.27.0
+    version: ~2.27
     values:
       - ./values/pihole.yml
     hooks:
@@ -21,8 +21,8 @@ releases:
   # Auto-sync ingresses with local DNS provider
   - name: externaldns-pihole
     namespace: pihole-system
-    chart: bitnami/external-dns
-    version: 8.0.1
+    chart: kubernetes-sigs/external-dns
+    version: ~1.19
     values:
       - ./values/dns.yml
 
