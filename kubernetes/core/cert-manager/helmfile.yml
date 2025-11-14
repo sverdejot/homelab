@@ -15,3 +15,5 @@ releases:
     namespace: cert-manager
     chart: jetstack/trust-manager
     version: ~0.14
+    needs:
+      - cert-manager
