@@ -3,3 +3,11 @@ server:
     enabled: true
     hosts:
       - prometheus.homelab.local
+
+  persistentVolume:
+    size: 512Mi
+
+
+alertmanager:
+  persistance:
+    size: 256Mi
