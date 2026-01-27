@@ -12,7 +12,5 @@ releases:
   - name: postgres-cluster
     namespace: postgres
     chart: cnpg/cluster
-    needs:
-      - cnpg-system/cnpg
     values:
       - ./values.yml

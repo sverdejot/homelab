@@ -1,5 +1,5 @@
----
 cluster:
+  name: postgres-cluster
   instances: 1
   storage:
     size: 8Gi
@@ -14,7 +14,7 @@ cluster:
         name: maybe
     - name: n8n
       ensure: present
-      coment: n8n - Workflow automation
+      comment: n8n - Workflow automation
       login: true
       createdb: true
       superuser: false
