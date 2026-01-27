@@ -1,0 +1,42 @@
+---
+valkey-cluster:
+  enabled: false
+valkey:
+  enabled: false
+postgresql:
+  enabled: true
+postgresql-ha:
+  enabled: false
+
+persistence:
+  enabled: true
+  accessModes:
+    - ReadWriteMany
+
+gitea:
+  config:
+    database:
+      DB_TYPE: postgres
+    indexer:
+      ISSUE_INDEXER_TYPE: bleve
+      REPO_INDEXER_ENABLED: true
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "512m"
+  className: nginx
+  hosts:
+    - host: git.homelab.local
+      paths:
+        - path: /
+          pathType: Prefix
+
+service:
+  ssh:
+    type: LoadBalancer
+    loadBalancerIP: 192.168.1.67
+    externalTrafficPolicy: Local
+    annotations:
+      metallb.universe.tf/allow-shared-ip: gitea

@@ -7,6 +7,12 @@ releases:
   - name: gitea
     namespace: gitea
     chart: gitea-charts/gitea
-    version: ~11.0
+    version: ~12
     values:
-      - ./values.yml
+      - ./values/service.yml
+
+  - name: gitea-actions
+    namespace: gitea
+    chart: gitea-charts/actions
+    values:
+      - ./values/actions.yml
