@@ -4,9 +4,15 @@ repositories:
     url: https://argoproj.github.io/argo-helm
 ---
 releases:
-  # ArgoCD base
   - name: argocd
     namespace: argocd
     chart: argo/argo-cd
     values:
-      - ./values.yml
+      - ./values/argo.yml
+
+  - name: argocd-image-updates
+    namespace: argocd
+    chart: argo/argocd-image-updater
+    values:
+      - ./values/image-updater.yml
+

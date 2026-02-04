@@ -1,3 +1,4 @@
+---
 global:
   domain: argo.homelab.local
   addPrometheusAnnotations: true
