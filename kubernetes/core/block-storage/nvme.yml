@@ -1,0 +1,12 @@
+---
+apiVersion: longhorn.io/v1beta2
+kind: Node
+metadata:
+  name: homelab-0
+  namespace: longhorn-system
+spec:
+  disks:
+    nvme:
+      path: /data/longhorn/nvme
+      allowScheduling: true
+      storageReserved: 0%
