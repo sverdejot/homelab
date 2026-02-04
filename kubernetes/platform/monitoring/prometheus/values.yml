@@ -5,7 +5,7 @@ server:
       - prometheus.homelab.local
 
   persistentVolume:
-    size: 512Mi
+    size: 2Gi
 
 
 alertmanager:
