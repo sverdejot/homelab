@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: umami-db-auth
+    namespace: umami
+    labels:
+        app: umami
+        cnpg.io/reload: "true"
+stringData:
+    username: ENC[AES256_GCM,data:BqBMm1Q=,iv:NPIitQiyLhBL3VtJaar0cjxoEpsO5++XJkGkP1DmECo=,tag:T+xcY+RIiFnVXYcDBQbKbQ==,type:str]
+    password: ENC[AES256_GCM,data:/xMDtjSl4XutG+gO,iv:EMO+linMAtnRMfkOU7bYToFondtKHfD6Y+WmtyApets=,tag:jn1WcRNHXXwOsGk724BHwg==,type:str]
+    database-url: ENC[AES256_GCM,data:hAeTaVfzyAHeX6uB2M8C0afrNxSMv5Pe4aB+XjvLeeiKXThZ2S5DfDixHKpZysDgTt6p43eFJTUXBS9y++MQfsPaPQ2T7cY=,iv:YoSo4S7ZC8FwfdE+fRLSMBB+5IQ0FzRx9VXdU+emv1E=,tag:vQ0in3j0ePaGoNTBh48o5Q==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB0V0o1OFI3MGJDaW4xRXhS
+            Y2xoMkpFNktDY0ZkeTNJalRYdWZqK0ZUYkdrClhkVHVENXN1N3BzcWlIVFo0ZUhF
+            ZHJaOTQySmE0d2J2RDg1c0NwR3U4Y1kKLS0tIHRoS2RndGY5Qkt5VWphUkJEMU5U
+            QVRmNXlzZDVQbFV0UytQZ05Vci9Sc00KmIC95geaO6629hl9+AiFybkByAOIZehp
+            iMIvfUM5xrYiPN7pjEGDXYGRMuNbZ9u836m8GVoKqorNI3ZEguovnA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-02-13T23:29:41Z"
+    mac: ENC[AES256_GCM,data:U3rUat7NnbD7lYLGYj05L48Jm2AfNMTtLxg6m2xy6DCHPxsyzTgScdsH6zVRQWxKrwejzIQIARupLhStlN6NqkzyDl6QLjQwY5bcegDtoIebhS16/ypB315AzgZ5M9nU344HJVPSMMchFu8AEboMfTiY4IX+Z71Q5DUiubEgfGc=,iv:DtLyC0BP0YLeKzP/684VDY65f3J3DiwBFfOlBV/ngz4=,tag:E2QPp+EGJCBG2IHiKDGZWA==,type:str]
+    pgp: []
+    encrypted_regex: ^(username|password|database\-url)$
+    version: 3.9.2

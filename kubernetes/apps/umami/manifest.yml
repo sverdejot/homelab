@@ -1,0 +1,96 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: umami
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: umami
+  name: umami
+  namespace: umami
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: umami
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: umami
+    spec:
+      containers:
+        - env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: umami-db-auth
+                  key: database-url
+            - name: DISABLE_TELEMETRY
+              value: "1"
+          image: ghcr.io/umami-software/umami:postgresql-latest
+          name: umami
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: "250Mi"
+            limits:
+              memory: "500Mi"
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: umami
+  name: umami-svc
+  namespace: umami
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: 3000
+  selector:
+    app: umami
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: umami-ingress
+  namespace: umami
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: sverdejot-dot-dev-issuer
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - analytics.sverdejot.dev
+      secretName: umami-sverdejot-dev-tls
+  rules:
+    - host: analytics.homelab.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: umami-svc
+                port:
+                  number: 3000
+    - host: analytics.sverdejot.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: umami-svc
+                port:
+                  number: 3000

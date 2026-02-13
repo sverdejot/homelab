@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: umami
+    namespace: postgres
+    labels:
+        app: umami
+        cnpg.io/reload: "true"
+stringData:
+    username: ENC[AES256_GCM,data:bTjYdLw=,iv:OWdQCNE3fCy7YWCXffKB4TSXxyEFzbqQz+k18hI1AGQ=,tag:ezebc/hDpbt+GzbdR/CGTQ==,type:str]
+    password: ENC[AES256_GCM,data:fyB4liNTEL6IZnuV,iv:5L1GUQidgbVstYVhZ+HBsY83Kl2G0ZWMsx4lBBR0rGY=,tag:2Fc3udTz3Y9WJBk08meTwQ==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBlNnlKVkJiZFpPL1VjWnl4
+            SG1zWEsvWGZaMUNSU0VNNzhiVWMrWUR5aVFzCnpxL0Uwd2lEYURFa00yUjZHbndK
+            VGNqSG9jWGx1NkI5Zm53aC81dFluVW8KLS0tIDcvamVoTVVKNG5hQk4yZC9EdDM0
+            TlM4N3JoZk5NclIwQ1RFQy80bkxQMGsKooXHt9gc9Z0CWyDzA18v/Jef2zgv6PDV
+            +K4ICtX5YC55VLlnPPEO+otwdOsjLBwr8FJzmqhqzwnY1DRB8mUtvw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-02-13T23:30:11Z"
+    mac: ENC[AES256_GCM,data:IJcvb/7KsVdPM+1QUiqveDrOK/0wlC5no2hJwbkI2cgFWibJEyMVmkzoTnkZbem/E6iVmgy1c/7aZ+JL/tMPv+clH3q2Hs7lRRWjKHnoeYn60hTkBcgCQy3PACi42N3T2ix/tXn2N9zzrbBS+TAxJxV3lDigydxAkd2dVQQZ7ss=,iv:kehRVuSDYIbIe7MrZYQgNyR5DqSIIBKmxfeRfJv6PSs=,tag:evVebuF3mgr+J64sLlznlw==,type:str]
+    pgp: []
+    encrypted_regex: ^(username|password)$
+    version: 3.9.2
