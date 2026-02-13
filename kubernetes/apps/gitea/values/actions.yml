@@ -3,7 +3,7 @@ enabled: true
 statefulset:
   extraVolumes:
     - name: custom-ca-bundle
-      configMap: 
+      configMap:
         name: custom-ca-bundle
   dind:
     tag: dind

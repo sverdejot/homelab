@@ -5,8 +5,6 @@ txtOwnerId: "homelab"
 registry: noop
 image:
   tag: v0.20.0
-provider:
-  name: pihole
 env:
   - name: EXTERNAL_DNS_PIHOLE_PASSWORD
     valueFrom:

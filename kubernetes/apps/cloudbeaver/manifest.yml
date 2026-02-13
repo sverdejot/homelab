@@ -22,26 +22,26 @@ spec:
         app: cloudbeaver
     spec:
       containers:
-      - name: cloudbeaver
-        image: dbeaver/cloudbeaver:latest
-        ports:
-        - containerPort: 8978
-        env:
-        - name: CB_SERVER_PUBLIC
-          value: "true"
-        - name: CB_SERVER_HOST
-          value: "0.0.0.0"
-        - name: CB_SERVER_PORT
-          value: "8978"
-        - name: CB_SERVER_CONTEXT_PATH
-          value: "/cloudbeaver"
-        volumeMounts:
-        - name: cloudbeaver-data
-          mountPath: /opt/cloudbeaver/data
+        - name: cloudbeaver
+          image: dbeaver/cloudbeaver:latest
+          ports:
+            - containerPort: 8978
+          env:
+            - name: CB_SERVER_PUBLIC
+              value: "true"
+            - name: CB_SERVER_HOST
+              value: "0.0.0.0"
+            - name: CB_SERVER_PORT
+              value: "8978"
+            - name: CB_SERVER_CONTEXT_PATH
+              value: "/cloudbeaver"
+          volumeMounts:
+            - name: cloudbeaver-data
+              mountPath: /opt/cloudbeaver/data
       volumes:
-      - name: cloudbeaver-data
-        persistentVolumeClaim:
-          claimName: cloudbeaver-pvc
+        - name: cloudbeaver-data
+          persistentVolumeClaim:
+            claimName: cloudbeaver-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -62,8 +62,8 @@ metadata:
   namespace: cloudbeaver
 spec:
   ports:
-  - port: 80
-    targetPort: 8978
+    - port: 80
+      targetPort: 8978
   selector:
     app: cloudbeaver
   type: ClusterIP
@@ -79,13 +79,13 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: cloudbeaver.homelab.local
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: cloudbeaver-svc
-            port:
-              number: 80
+    - host: cloudbeaver.homelab.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cloudbeaver-svc
+                port:
+                  number: 80

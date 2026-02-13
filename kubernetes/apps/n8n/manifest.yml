@@ -117,13 +117,13 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: n8n.homelab.local
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: n8n-svc
-            port:
-              number: 5678
+    - host: n8n.homelab.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: n8n-svc
+                port:
+                  number: 5678

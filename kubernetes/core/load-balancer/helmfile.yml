@@ -12,4 +12,4 @@ releases:
     hooks:
       - events: ["post-sync"]
         command: kubectl
-        args: [ "apply", "-f", "pool.yml" ]
+        args: ["apply", "-f", "pool.yml"]

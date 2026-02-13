@@ -1,6 +1,6 @@
 ---
 repositories:
-  - name: linkerd-edge 
+  - name: linkerd-edge
     url: https://helm.linkerd.io/edge
 ---
 releases:
@@ -19,7 +19,7 @@ releases:
     hooks:
       - events: ["presync"]
         command: kubectl
-        args: [ "apply", "-f", "mtls.yml" ]
+        args: ["apply", "-f", "mtls.yml"]
 
   - name: linkerd-control-plane
     namespace: linkerd

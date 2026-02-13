@@ -14,4 +14,4 @@ releases:
     hooks:
       - events: ["post-sync"]
         command: kubectl
-        args: [ "apply", "-f", "serviceaccount.yml" ]
+        args: ["apply", "-f", "serviceaccount.yml"]

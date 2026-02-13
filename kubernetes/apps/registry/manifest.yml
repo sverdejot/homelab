@@ -6,7 +6,6 @@ metadata:
   labels:
     app: registry
     name: registry
-kind: Namespace
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -38,21 +37,21 @@ spec:
         app: registry
     spec:
       containers:
-      - name: registry
-        image: registry:2
-        ports:
-        - containerPort: 5000
-        env:
-        - name: REGISTRY_STORAGE_DELETE_ENABLED
-          value: "true"
-        volumeMounts:
-        - name: registry-data
-          mountPath: /var/lib/registry
-          subPath: registry
+        - name: registry
+          image: registry:2
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REGISTRY_STORAGE_DELETE_ENABLED
+              value: "true"
+          volumeMounts:
+            - name: registry-data
+              mountPath: /var/lib/registry
+              subPath: registry
       volumes:
-      - name: registry-data
-        persistentVolumeClaim:
-          claimName: registry-pvc
+        - name: registry-data
+          persistentVolumeClaim:
+            claimName: registry-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -81,13 +80,13 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: registry.homelab.local
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: registry-svc
-            port:
-              number: 5000
+    - host: registry.homelab.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: registry-svc
+                port:
+                  number: 5000

@@ -52,15 +52,15 @@ spec:
     kind: ClusterIssuer
   commonName: identity.linkerd.cluster.local
   dnsNames:
-  - identity.linkerd.cluster.local
+    - identity.linkerd.cluster.local
   isCA: true
   privateKey:
     algorithm: ECDSA
   usages:
-  - cert sign
-  - crl sign
-  - server auth
-  - client auth
+    - cert sign
+    - crl sign
+    - server auth
+    - client auth
 ---
 apiVersion: trust.cert-manager.io/v1alpha1
 kind: Bundle
@@ -68,9 +68,9 @@ metadata:
   name: linkerd-identity-trust-roots
 spec:
   sources:
-  - secret:
-      name: "linkerd-identity-trust-roots"
-      key: "ca.crt"
+    - secret:
+        name: "linkerd-identity-trust-roots"
+        key: "ca.crt"
   target:
     configMap:
       key: "ca-bundle.crt"

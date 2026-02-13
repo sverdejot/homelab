@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+#MISE description="Lint all YAML files under kubernetes/"
+yamllint kubernetes/

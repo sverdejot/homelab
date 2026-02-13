@@ -10,4 +10,4 @@ spec:
     name: sverdejot-dot-dev-issuer
     kind: ClusterIssuer
   dnsNames:
-  - "*.sverdejot.dev"
+    - "*.sverdejot.dev"

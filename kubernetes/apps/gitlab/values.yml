@@ -5,7 +5,7 @@ global:
 
   certificates:
     customCAs:
-    - configMap: custom-ca-bundle
+      - configMap: custom-ca-bundle
 
   time_zone: Europe/Madrid
 

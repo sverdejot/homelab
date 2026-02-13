@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Helmfile sync for a layer (core, platform, apps)"
+#USAGE arg "<layer>" help="Target layer: core, platform, or apps" {
+#USAGE   choices "core" "platform" "apps"
+#USAGE }
+helmfile -f "kubernetes/${usage_layer?}" sync

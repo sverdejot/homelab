@@ -15,4 +15,3 @@ releases:
     chart: argo/argocd-image-updater
     values:
       - ./values/image-updater.yml
-

@@ -12,4 +12,4 @@ releases:
     hooks:
       - events: ["post-sync"]
         command: kubectl
-        args: [ "apply", "-f", "datasource.yml" ]
+        args: ["apply", "-f", "datasource.yml"]

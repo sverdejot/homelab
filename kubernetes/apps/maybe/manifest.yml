@@ -24,38 +24,38 @@ spec:
         app: maybe
     spec:
       containers:
-      - name: maybe
-        image: ghcr.io/maybe-finance/maybe:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: "SELF_HOSTED"
-          value: "true"
-        - name: "RAILS_FORCE_SSL"
-          value: "false"
-        - name: "RAILS_ASSUME_SSL"
-          value: "false"
-        - name: "GOOD_JOB_EXECUTION_MODE"
-          value: "async"
-        - name: "SECRET_KEY_BASE"
-          valueFrom:
-            secretKeyRef:
-              name: maybe-secret
-              key: secret
-        - name: "DB_HOST"
-          value: "postgres-cluster-rw.postgres"
-        - name: "POSTGRES_DB"
-          value: "maybe"
-        - name: "POSTGRES_USER"
-          valueFrom:
-            secretKeyRef:
-              name: maybe-db-auth
-              key: username
-        - name: "POSTGRES_PASSWORD"
-          valueFrom:
-            secretKeyRef:
-              name: maybe-db-auth
-              key: password
+        - name: maybe
+          image: ghcr.io/maybe-finance/maybe:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: "SELF_HOSTED"
+              value: "true"
+            - name: "RAILS_FORCE_SSL"
+              value: "false"
+            - name: "RAILS_ASSUME_SSL"
+              value: "false"
+            - name: "GOOD_JOB_EXECUTION_MODE"
+              value: "async"
+            - name: "SECRET_KEY_BASE"
+              valueFrom:
+                secretKeyRef:
+                  name: maybe-secret
+                  key: secret
+            - name: "DB_HOST"
+              value: "postgres-cluster-rw.postgres"
+            - name: "POSTGRES_DB"
+              value: "maybe"
+            - name: "POSTGRES_USER"
+              valueFrom:
+                secretKeyRef:
+                  name: maybe-db-auth
+                  key: username
+            - name: "POSTGRES_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: maybe-db-auth
+                  key: password
 ---
 apiVersion: v1
 kind: Service
@@ -64,7 +64,7 @@ metadata:
   namespace: maybe
   labels:
     app: maybe
-spec: 
+spec:
   type: ClusterIP
   ports:
     - port: 80
@@ -83,13 +83,13 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: finance.homelab.local
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: maybe-svc
-            port:
-              number: 80
+    - host: finance.homelab.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: maybe-svc
+                port:
+                  number: 80

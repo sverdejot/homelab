@@ -6,4 +6,3 @@ metadata:
 spec:
   ca:
     secretName: ca-certificate
-

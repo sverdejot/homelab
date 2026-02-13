@@ -5,9 +5,9 @@ metadata:
   name: custom-ca-bundle
 spec:
   sources:
-  - secret:
-      name: "ca-certificate"
-      key: "tls.crt"
+    - secret:
+        name: "ca-certificate"
+        key: "tls.crt"
   target:
     configMap:
       key: "ca-bundle.crt"

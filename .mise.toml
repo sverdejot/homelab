@@ -1,0 +1,8 @@
+[tools]
+kubectl = "latest"
+helmfile = "latest"
+helm = "latest"
+yamllint = "latest"
+
+[env]
+KUBECONFIG = "~/.kube/config"

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+#MISE description="Initialize k3s master node"
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --disable servicelb --tls-san homelab-0.local" sh -s -
