@@ -1,0 +1,12 @@
+---
+repositories:
+  - name: open-webui
+    url: https://helm.openwebui.com/
+---
+releases:
+  - name: openchat
+    namespace: openchat
+    chart: open-webui/open-webui
+    version: ~6
+    values:
+      - ./values.yml

@@ -1,0 +1,18 @@
+ollama:
+  enabled: false
+
+pipelines:
+  enabled: false
+
+ollamaUrls:
+  - http://ollama.ollama:11434
+
+ingress:
+  enabled: true
+  class: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  host: chat.homelab.local
+
+persistence:
+  enabled: false
