@@ -11,8 +11,14 @@ server:
   ingress:
     enabled: true
     ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: certificate-issuer
     hosts:
-      - idp.homelab.local
+      - identity.homelab.local
+    tls:
+      - secretName: identity-homelab-local-tls
+        hosts:
+          - identity.homelab.local
   env:
     - name: AUTHENTIK_SECRET_KEY
       valueFrom:

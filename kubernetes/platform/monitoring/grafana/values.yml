@@ -14,25 +14,24 @@ persistence:
 
 env:
   GF_SERVER_ROOT_URL: "https://grafana.homelab.local"
-  GF_AUTH_ANONYMOUS_ENABLED: "true"
-  GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+  GF_AUTH_GENERIC_OIDC_ENABLED: "true"
+  GF_AUTH_GENERIC_OIDC_NAME: "Authentik"
+  GF_AUTH_GENERIC_OIDC_CLIENT_ID: "grafana"
+  GF_AUTH_GENERIC_OIDC_CLIENT_SECRET: "changeme" # Should be in a Secret
+  GF_AUTH_GENERIC_OIDC_AUTH_URL: "https://identity.homelab.local/application/o/authorize/"
+  GF_AUTH_GENERIC_OIDC_TOKEN_URL: "https://identity.homelab.local/application/o/token/"
+  GF_AUTH_GENERIC_OIDC_API_URL: "https://identity.homelab.local/application/o/userinfo/"
+  GF_AUTH_GENERIC_OIDC_SCOPES: "openid profile email"
+  GF_AUTH_GENERIC_OIDC_ROLE_ATTRIBUTE_PATH: "contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'"
+  GF_AUTH_ANONYMOUS_ENABLED: "false"
 
 grafana.ini:
-  paths:
-    data: /var/lib/grafana/
-    logs: /var/log/grafana
-    plugins: /var/lib/grafana/plugins
-    provisioning: /etc/grafana/provisioning
-  analytics:
-    check_for_updates: true
-  log:
-    mode: console
-  grafana_net:
-    url: https://grafana.net
-  server:
-    domain: "{{ if (and .Values.ingress.enabled .Values.ingress.hosts) }}{{ tpl (.Values.ingress.hosts | first) . }}{{ else }}''{{ end }}"
+  auth.generic_oidc:
+    enabled: true
+    name: Authentik
   auth:
-    anonymous: true
+    disable_login_form: false
+    anonymous: false
 
 sidecar:
   datasources:
