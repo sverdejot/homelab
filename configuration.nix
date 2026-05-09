@@ -26,13 +26,10 @@
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     createHome = true;
-    home = "/home/sverdejot";
+    home = "/home/homelab";
     homeMode = "700";
     useDefaultShell = true;
-    packages = with pkgs; [
-      neovim
-      k9s
-    ];
+    hashedPassword = "$6$H64VBbiI4Smitv2a$t60NdAAB6yQNmSJ7Au4iodkW7zBwD8yeU22MEOds4AvcxXOqMCR7hyDD8zYlWvjwyov2lmTri//m3nIS.iv.Z0";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDrmz07HwGLmolDv93gK9QUfU7cP207iJA80ZVsoAV+h sverdejot@sverdehost.local"
     ];

@@ -19,8 +19,8 @@
       nixos-raspberrypi.lib.nixosSystem {
         specialArgs = { inherit nixos-raspberrypi; };
         modules = [
-          nixos-raspberrypi.nixosModules.raspberry-pi-5
-          nixos-raspberrypi.nixosModules.page-size-16k
+          nixos-raspberrypi.nixosModules.raspberry-pi-5.base
+          nixos-raspberrypi.nixosModules.raspberry-pi-5.page-size-16k
           disko.nixosModules.disko
           storageModule
           ./configuration.nix
@@ -29,7 +29,16 @@
       };
   in {
     nixosConfigurations = {
-      homelab-0 = mkNode { 
+      homelab-installer = nixos-raspberrypi.nixosConfigurations.rpi5-installer.extendModules {
+        modules = [({ lib, ... }: {
+          users.users.root.openssh.authorizedKeys.keys = [
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDrmz07HwGLmolDv93gK9QUfU7cP207iJA80ZVsoAV+h sverdejot@sverdehost.local"
+          ];
+          networking.wireless.enable = lib.mkForce false;
+        })];
+      };
+
+      homelab-0 = mkNode {
         hostname = "homelab-0"; 
         storageModule = ./nvme.nix; 
         extraModules = [ ./k3s-server.nix ]; 
