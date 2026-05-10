@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-#MISE description="Helmfile diff for a layer (core, platform, apps)"
+#MISE description="Helmfile sync for a layer"
 #USAGE arg "<layer>" help="Target layer: core, platform, or apps" {
 #USAGE   choices "core" "platform" "apps"
 #USAGE }
-helmfile -f "kubernetes/${usage_layer?}" diff
+helmfile -f "kubernetes/${usage_layer?}" sync

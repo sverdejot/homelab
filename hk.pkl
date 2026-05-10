@@ -1,0 +1,24 @@
+amends "package://github.com/jdx/hk/releases/download/v1.45.0/hk@1.45.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.45.0/hk@1.45.0#/Builtins.pkl"
+
+local linters = new Mapping<String, Step> {
+    ["yamllint"] = (Builtins.yamllint) {
+        glob = List("**/*.yml", "**/*.yaml")
+    }
+    ["deadnix"] = (Builtins.deadnix) {
+        glob = List("**/*.nix")
+    }
+}
+
+hooks {
+    ["pre-push"] {
+        steps = linters
+    }
+    ["fix"] {
+        fix = true
+        steps = linters
+    }
+    ["check"] {
+        steps = linters
+    }
+}

@@ -3,72 +3,12 @@ kubectl = "latest"
 helmfile = "latest"
 helm = "latest"
 yamllint = "latest"
-zstd = "latest"
+"cargo:deadnix" = "latest"
+hk = "latest"
+pkl = "latest"
 
-[tasks.build-node]
-description = "Build SD image for a node. Usage: mise run build-node <node-name> (e.g. homelab-0)"
-run = """
-#!/usr/bin/env bash
-set -euo pipefail
-NODE=${1:?node name required (e.g. homelab-0)}
-nix build ".#nixosConfigurations.${NODE}.config.system.build.sdImage" \
-  --accept-flake-config \
-  --extra-experimental-features "nix-command flakes" \
-  --print-build-logs
-IMG=$(find -L result -name "*.img.zst" | head -1)
-cp "$IMG" "${NODE}.img.zst"
-sha256sum "${NODE}.img.zst" > "${NODE}.img.zst.sha256"
-"""
+[env]
+HK_MISE = 1
 
-[tasks.build-installer]
-description = "Build RPi5 installer image"
-run = """
-#!/usr/bin/env bash
-set -euo pipefail
-nix build "github:nvmd/nixos-raspberrypi#installerImages.rpi5" \
-  --accept-flake-config \
-  --extra-experimental-features "nix-command flakes" \
-  --print-build-logs
-IMG=$(find -L result -name "*.img.zst" | head -1)
-cp "$IMG" installer-rpi5.img.zst
-sha256sum installer-rpi5.img.zst > installer-rpi5.img.zst.sha256
-"""
-
-[tasks.flash-master]
-description = "Flash master node from latest release. Usage: mise run flash-master <node-number> <device> (e.g. 0 rdisk4)"
-run = """
-#!/usr/bin/env bash
-set -euo pipefail
-NODE=${1:?node number required}
-DEVICE=${2:?device required}
-TAG=${TAG:-$(gh release list --limit 1 --json tagName --jq '.[0].tagName')}
-REPO=$(gh repo view --json nameWithOwner --jq '.nameWithOwner')
-echo "Downloading installer image from release $TAG..."
-gh release download "$TAG" --pattern 'installer-rpi5.img.zst' --output installer-rpi5.img.zst --clobber
-gh release download "$TAG" --pattern 'installer-rpi5.img.zst.sha256' --output installer-rpi5.img.zst.sha256 --clobber
-shasum -a 256 -c installer-rpi5.img.zst.sha256
-gh attestation verify installer-rpi5.img.zst --repo "$REPO"
-zstd -df installer-rpi5.img.zst -o installer-rpi5.img
-sudo dd if=installer-rpi5.img of=/dev/"$DEVICE" bs=4M status=progress && sudo sync
-rm installer-rpi5.img installer-rpi5.img.zst installer-rpi5.img.zst.sha256
-"""
-
-[tasks.flash-agent]
-description = "Flash agent node from latest release. Usage: mise run flash-agent <node-number> <device> (e.g. 1 rdisk4)"
-run = """
-#!/usr/bin/env bash
-set -euo pipefail
-NODE=${1:?node number required}
-DEVICE=${2:?device required}
-TAG=${TAG:-$(gh release list --limit 1 --json tagName --jq '.[0].tagName')}
-REPO=$(gh repo view --json nameWithOwner --jq '.nameWithOwner')
-ASSET="homelab-${NODE}.img.zst"
-echo "Downloading $ASSET from release $TAG..."
-gh release download "$TAG" --pattern "$ASSET" --output "$ASSET" --clobber
-gh release download "$TAG" --pattern "$ASSET.sha256" --output "$ASSET.sha256" --clobber
-shasum -a 256 -c "$ASSET.sha256"
-gh attestation verify "$ASSET" --repo "$REPO"
-zstd -df "$ASSET" -o "homelab-${NODE}.img"
-sudo dd if="homelab-${NODE}.img" of=/dev/"$DEVICE" bs=4M status=progress && sudo sync
-rm "homelab-${NODE}.img" "$ASSET" "$ASSET.sha256"
-"""
+[hooks]
+postinstall = "hk install --mise"

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#MISE description="Install master node onto NVMe via nixos-anywhere. Usage: mise run install:master [node-name] [installer-host]"
+set -euo pipefail
+NODE=${1:-homelab-0}
+HOST=${2:-nixos-installer.local}
+nix run github:nix-community/nixos-anywhere -- \
+  --flake ".#${NODE}" \
+  --phases disko,install,reboot \
+  --build-on-remote \
+  --no-substitute-on-destination \
+  --ssh-option "IdentityFile=${HOME}/.ssh/nixos" \
+  root@"${HOST}"
