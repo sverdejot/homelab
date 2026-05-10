@@ -11,54 +11,55 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixos-raspberrypi, disko, ... }:
+  outputs = { self, nixpkgs, nixos-raspberrypi, disko, sops-nix, ... }:
   let
-    mkNode = { hostname, storageModule, extraModules ? [] }:
-      nixos-raspberrypi.lib.nixosSystem {
+    hosts = import ./modules/hosts.nix;
+
+    mkIP = nodeNum: "${hosts.baseIP}.${toString (nodeNum + hosts.ipOffset)}";
+
+    mkNode = { nodeNum, storageModule, extraModules ? [] }:
+      let
+        hostname = "homelab-${toString nodeNum}";
+        ip = mkIP nodeNum;
+      in nixos-raspberrypi.lib.nixosSystem {
         specialArgs = { inherit nixos-raspberrypi; };
         modules = [
           nixos-raspberrypi.nixosModules.raspberry-pi-5.base
           nixos-raspberrypi.nixosModules.raspberry-pi-5.page-size-16k
           disko.nixosModules.disko
+          sops-nix.nixosModules.sops
           storageModule
-          ./configuration.nix
-          { networking.hostName = hostname; }
+          ./modules/common.nix
+          {
+            networking.hostName = hostname;
+            networking.useDHCP = false;
+            networking.interfaces.end0.ipv4.addresses = [{
+              address = ip;
+              prefixLength = 24;
+            }];
+            networking.defaultGateway = "192.168.1.1";
+            networking.nameservers = [ "192.168.1.1" ];
+          }
         ] ++ extraModules;
       };
+
+    agentNodes = builtins.listToAttrs (map (n: {
+      name = "homelab-${toString n}";
+      value = mkNode (hosts.agent // { nodeNum = n; });
+    }) (builtins.genList (x: x + 1) (hosts.nodeCount - 1)));
   in {
     nixosConfigurations = {
       homelab-installer = nixos-raspberrypi.nixosConfigurations.rpi5-installer.extendModules {
-        modules = [({ lib, ... }: {
-          users.users.root.openssh.authorizedKeys.keys = [
-            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDrmz07HwGLmolDv93gK9QUfU7cP207iJA80ZVsoAV+h sverdejot@sverdehost.local"
-          ];
-          networking.wireless.enable = lib.mkForce false;
-        })];
+        modules = [ ./modules/installer.nix ];
       };
 
-      homelab-0 = mkNode {
-        hostname = "homelab-0"; 
-        storageModule = ./nvme.nix; 
-        extraModules = [ ./k3s-server.nix ]; 
-      };
-      homelab-1 = mkNode { 
-        hostname = "homelab-1"; 
-        storageModule = ./sd.nix; 
-        extraModules = [ ./k3s-agent.nix ]; 
-      };
-      homelab-2 = mkNode { 
-        hostname = "homelab-2"; 
-        storageModule = ./sd.nix; 
-        extraModules = [ ./k3s-agent.nix ]; 
-      };
-      homelab-3 = mkNode { 
-        hostname = "homelab-3"; 
-        storageModule = ./sd.nix; 
-        extraModules = [ ./k3s-agent.nix ]; 
-      };
-    };
-
+      "homelab-${toString hosts.master.nodeNum}" = mkNode hosts.master;
+    } // agentNodes;
   };
 }

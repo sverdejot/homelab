@@ -1,0 +1,5 @@
+creation_rules:
+  - path_regex: modules/token\.yaml$
+    age: age1j6v9wtt66x4gc92agy77p0eelj3chda66zxwvpjemtdkl832fp7sy5n9k4
+  - path_regex: kubernetes/.*
+    age: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
