@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   nix = {
@@ -12,6 +12,14 @@
 
   services.openssh.enable = true;
 
+<<<<<<< Updated upstream
+=======
+  services.openiscsi = {
+    enable = true;
+    name = "iqn.2016-01.com.homelab:${config.networking.hostName}";
+  };
+
+>>>>>>> Stashed changes
   services.avahi = {
     enable = true;
     nssmdns4 = true;
@@ -46,5 +54,5 @@
 
   boot.loader.raspberry-pi.bootloader = "kernel";
 
-  system.stateVersion = "24.05";
+  system.stateVersion = "26.05";
 }

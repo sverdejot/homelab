@@ -63,6 +63,7 @@
       name = "homelab-${toString n}-image";
       value = nixos-raspberrypi.nixosConfigurations.rpi5-installer.extendModules {
         modules = [
+          ./modules/common.nix
           ./modules/k3s/agent.nix
           ({ ... }: {
             networking.hostName = "homelab-${toString n}";
