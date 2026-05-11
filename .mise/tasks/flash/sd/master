@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Flash pre-built master installer image to SD. Usage: mise run flash:sd:master <device> (e.g. rdisk4)"
+set -euo pipefail
+DEVICE=${1:?device required}
+sudo dd if=installer-master.img of=/dev/"$DEVICE" bs=4M status=progress && sudo sync

@@ -1,14 +1,7 @@
 #!/usr/bin/env bash
-#MISE description="Flash agent node SD image. Usage: mise run flash:agent <node-number> <device> (e.g. 1 rdisk4)"
+#MISE description="Build and flash agent SD image. Usage: mise run flash:agent <node-number> <device> (e.g. 1 rdisk4)"
 set -euo pipefail
 NODE=${1:?node number required}
 DEVICE=${2:?device required}
-docker run --rm -v "$(pwd)":/app -w /app -e NODE="$NODE" nixos/nix:latest bash -c '
-  set -euo pipefail
-  nix --extra-experimental-features "nix-command flakes" --accept-flake-config build \
-    ".#nixosConfigurations.homelab-${NODE}-image.config.system.build.sdImage" --out-link /tmp/img
-  IMG=$(find -L /tmp/img -name "*.img.zst" | head -1)
-  nix --extra-experimental-features "nix-command flakes" shell nixpkgs#zstd \
-    --command zstd -d "$IMG" -o /app/homelab-${NODE}.img
-'
-sudo dd if="homelab-$NODE.img" of=/dev/"$DEVICE" bs=4M status=progress && sudo sync
+mise run build:agent "$NODE"
+mise run flash:sd:agent "$NODE" "$DEVICE"

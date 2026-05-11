@@ -1,14 +1,7 @@
 #!/usr/bin/env bash
-#MISE description="Flash master node SD image. Usage: mise run flash:master <node-number> <device> (e.g. 0 rdisk4)"
+#MISE description="Build and flash master installer SD image. Usage: mise run flash:master <node-number> <device> (e.g. 0 rdisk4)"
 set -euo pipefail
 NODE=${1:?node number required}
 DEVICE=${2:?device required}
-docker run --rm -v "$(pwd)":/app -w /app nixos/nix:latest bash -c '
-  set -euo pipefail
-  nix --extra-experimental-features "nix-command flakes" --accept-flake-config build \
-    ".#nixosConfigurations.homelab-installer.config.system.build.sdImage" --out-link /tmp/img
-  IMG=$(find -L /tmp/img -name "*.img.zst" | head -1)
-  nix --extra-experimental-features "nix-command flakes" shell nixpkgs#zstd \
-    --command zstd -d "$IMG" -o /app/installer-master.img
-'
-sudo dd if=installer-master.img of=/dev/"$DEVICE" bs=4M status=progress && sudo sync
+mise run build:installer
+mise run flash:sd:master "$DEVICE"
