@@ -11,7 +11,7 @@ in {
   services.k3s = {
     enable = true;
     role = "server";
-    tokenFile = "/run/secrets/k3s-token";
+    tokenFile = "/etc/k3s/token";
     extraFlags = lib.concatStringsSep " " [
       "--tls-san=${config.networking.hostName}.local"
       "--tls-san=${ip}"

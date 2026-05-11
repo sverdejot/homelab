@@ -1,11 +1,11 @@
-{ config, pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   nix = {
     package = pkgs.nixVersions.stable;
   };
 
-  networking.firewall = {
+  networking.firewall = lib.mkForce {
     enable = true;
     allowedTCPPorts = [ 22 ];
   };
@@ -47,18 +47,4 @@
   boot.loader.raspberry-pi.bootloader = "kernel";
 
   system.stateVersion = "24.05";
-
-  sops = {
-    defaultSopsFile = ./token.yaml;
-    age.keyFile = "/var/lib/sops-nix/age-key";
-
-    secrets.k3s-token = {
-      # decrypted to /run/secrets/k3s-token
-    };
-  };
-
-  systemd.tmpfiles.rules = [
-    "d /var/lib/sops-nix 0700 root root - -"
-    "f /var/lib/sops-nix/age-key 0400 root root - AGE-SECRET-KEY-1TT4P2U7ZR949SAK435HY5RAC3AK9NFVP0EE7GEFN28R97LW9R9CQNXFSL5"
-  ];
 }

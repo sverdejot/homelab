@@ -3,6 +3,7 @@
 set -euo pipefail
 NODE=${1:-homelab-0}
 HOST=${2:-nixos-installer.local}
+
 nix run github:nix-community/nixos-anywhere -- \
   --flake ".#${NODE}" \
   --phases disko,install,reboot \

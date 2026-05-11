@@ -16,7 +16,7 @@ configs:
       clientID: argocd
       clientSecret: changeme
       requestedScopes: ["openid", "profile", "email", "groups"]
-    
+
   rbac:
     policy.default: role:readonly
     policy.csv: |

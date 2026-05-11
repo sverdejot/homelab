@@ -1,6 +1,15 @@
 {
   description = "sverdejot-homelab";
 
+  nixConfig = {
+    extra-substituters = [
+      "https://nixos-raspberrypi.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "nixos-raspberrypi.cachix.org-1:4iMO9LXa8BqhU+Rpg6LQKiGa2lsNh/j2oiYLNOQ5sPI="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-raspberrypi = {
@@ -11,14 +20,11 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = { self, nixpkgs, nixos-raspberrypi, disko, sops-nix, ... }:
+  outputs = { nixpkgs, nixos-raspberrypi, disko, ... }:
   let
+    inherit (nixpkgs) lib;
     hosts = import ./modules/hosts.nix;
 
     mkIP = nodeNum: "${hosts.baseIP}.${toString (nodeNum + hosts.ipOffset)}";
@@ -33,7 +39,6 @@
           nixos-raspberrypi.nixosModules.raspberry-pi-5.base
           nixos-raspberrypi.nixosModules.raspberry-pi-5.page-size-16k
           disko.nixosModules.disko
-          sops-nix.nixosModules.sops
           storageModule
           ./modules/common.nix
           {
@@ -53,6 +58,29 @@
       name = "homelab-${toString n}";
       value = mkNode (hosts.agent // { nodeNum = n; });
     }) (builtins.genList (x: x + 1) (hosts.nodeCount - 1)));
+
+    agentImages = builtins.listToAttrs (map (n: {
+      name = "homelab-${toString n}-image";
+      value = nixos-raspberrypi.nixosConfigurations.rpi5-installer.extendModules {
+        modules = [
+          ./modules/k3s/agent.nix
+          ({ ... }: {
+            networking.hostName = "homelab-${toString n}";
+            networking.useDHCP = lib.mkForce false;
+            networking.interfaces.end0.ipv4.addresses = [{
+              address = mkIP n;
+              prefixLength = 24;
+            }];
+            networking.defaultGateway = {
+              address = "192.168.1.1";
+              interface = "end0";
+            };
+            networking.nameservers = [ "192.168.1.1" ];
+            networking.wireless.enable = lib.mkForce false;
+          })
+        ];
+      };
+    }) (builtins.genList (x: x + 1) (hosts.nodeCount - 1)));
   in {
     nixosConfigurations = {
       homelab-installer = nixos-raspberrypi.nixosConfigurations.rpi5-installer.extendModules {
@@ -60,6 +88,6 @@
       };
 
       "homelab-${toString hosts.master.nodeNum}" = mkNode hosts.master;
-    } // agentNodes;
+    } // agentNodes // agentImages;
   };
 }
