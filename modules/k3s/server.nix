@@ -21,4 +21,9 @@ in {
       "--write-kubeconfig-mode=644"
     ];
   };
+
+  fileSystems."/sd" = {
+    device = "/dev/mmcblk0p1";
+    fsType = "ext4";
+  };
 }
