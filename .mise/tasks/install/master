@@ -7,7 +7,6 @@ HOST=${2:-nixos-installer.local}
 nix run github:nix-community/nixos-anywhere -- \
   --flake ".#${NODE}" \
   --phases disko,install,reboot \
-  --build-on-remote \
+  --build-on remote \
   --no-substitute-on-destination \
-  --ssh-option "IdentityFile=${HOME}/.ssh/nixos" \
   root@"${HOST}"

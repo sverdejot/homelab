@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
 #MISE description="Apply config changes to master node without reflashing. Usage: mise run switch:master"
 set -euo pipefail
-nixos-rebuild switch --flake ".#homelab-0" --target-host "root@192.168.1.2" --use-remote-sudo
+nix run nixpkgs#nixos-rebuild -- switch --flake ".#homelab-0" \
+  --target-host "homelab@192.168.1.2" \
+  --build-host "homelab@192.168.1.2" \
+  --sudo
