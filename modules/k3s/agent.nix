@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
   imports = [ ./default.nix ];
 
@@ -9,8 +9,5 @@
     role = "agent";
     serverAddr = "https://192.168.1.2:6443";
     tokenFile = "/etc/k3s/token";
-    extraFlags = lib.concatStringsSep " " [
-      "--kubelet-arg=v=2"
-    ];
   };
 }

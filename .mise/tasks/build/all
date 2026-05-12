@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#MISE description="Build installer + all agent SD images (reuses nix cache)"
+set -euo pipefail
+
+if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
+  echo "=== Building installer ==="
+  nix build --extra-experimental-features "nix-command flakes" --accept-flake-config \
+    ".#nixosConfigurations.homelab-installer.config.system.build.sdImage" -L
+  for NODE in 1 2 3; do
+    echo "=== Building homelab-${NODE}-image ==="
+    nix build --extra-experimental-features "nix-command flakes" --accept-flake-config \
+      ".#nixosConfigurations.homelab-${NODE}-image.config.system.build.sdImage" -L
+  done
+else
+  docker run --rm -v "$(pwd)":/app -w /app nixos/nix:latest bash -c '
+    set -euo pipefail
+
+    echo "=== Building installer ==="
+    nix --extra-experimental-features "nix-command flakes" --accept-flake-config build \
+      ".#nixosConfigurations.homelab-installer.config.system.build.sdImage" --out-link /tmp/img
+    IMG=$(find -L /tmp/img -name "*.img.zst" | head -1)
+    nix --extra-experimental-features "nix-command flakes" shell nixpkgs#zstd \
+      --command zstd -d "$IMG" -o /app/installer-master.img
+    rm -f /tmp/img
+
+    for NODE in 1 2 3; do
+      echo "=== Building homelab-$NODE-image ==="
+      nix --extra-experimental-features "nix-command flakes" --accept-flake-config build \
+        ".#nixosConfigurations.homelab-${NODE}-image.config.system.build.sdImage" --out-link /tmp/img
+      IMG=$(find -L /tmp/img -name "*.img.zst" | head -1)
+      nix --extra-experimental-features "nix-command flakes" shell nixpkgs#zstd \
+        --command zstd -d "$IMG" -o /app/homelab-${NODE}.img
+      rm -f /tmp/img
+    done
+
+    echo "=== Done: installer-master.img + homelab-1.img homelab-2.img homelab-3.img ==="
+  '
+fi

@@ -1,0 +1,32 @@
+name: Build SD Images
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - run: mise run build:installer
+          - run: mise run build:agent 1
+          - run: mise run build:agent 2
+          - run: mise run build:agent 3
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            extra-experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: jdx/mise-action@v2
+        with:
+          install: false
+
+      - run: ${{ matrix.run }}

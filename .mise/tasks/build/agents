@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#MISE description="Build all agent SD images (reuses nix cache)"
+set -euo pipefail
+
+if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
+  for NODE in 1 2 3; do
+    echo "=== Building homelab-${NODE}-image ==="
+    nix build --extra-experimental-features "nix-command flakes" --accept-flake-config \
+      ".#nixosConfigurations.homelab-${NODE}-image.config.system.build.sdImage" -L
+  done
+else
+  docker run --rm -v "$(pwd)":/app -w /app nixos/nix:latest bash -c '
+    set -euo pipefail
+    for NODE in 1 2 3; do
+      echo "=== Building homelab-$NODE-image ==="
+      nix --extra-experimental-features "nix-command flakes" --accept-flake-config build \
+        ".#nixosConfigurations.homelab-${NODE}-image.config.system.build.sdImage" --out-link /tmp/img
+      IMG=$(find -L /tmp/img -name "*.img.zst" | head -1)
+      nix --extra-experimental-features "nix-command flakes" shell nixpkgs#zstd \
+        --command zstd -d "$IMG" -o /app/homelab-${NODE}.img
+      rm -f /tmp/img
+    done
+  '
+fi

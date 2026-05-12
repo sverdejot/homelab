@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Apply config changes to agent node without reflashing. Usage: mise run switch:agent <node-number>"
+set -euo pipefail
+NODE=${1:?node number required}
+nixos-rebuild switch --flake ".#homelab-${NODE}-image" --target-host "root@192.168.1.$((NODE + 2))" --use-remote-sudo

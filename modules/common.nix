@@ -12,14 +12,11 @@
 
   services.openssh.enable = true;
 
-<<<<<<< Updated upstream
-=======
   services.openiscsi = {
     enable = true;
     name = "iqn.2016-01.com.homelab:${config.networking.hostName}";
   };
 
->>>>>>> Stashed changes
   services.avahi = {
     enable = true;
     nssmdns4 = true;
@@ -37,7 +34,6 @@
     home = "/home/homelab";
     homeMode = "700";
     useDefaultShell = true;
-    hashedPassword = "$6$H64VBbiI4Smitv2a$t60NdAAB6yQNmSJ7Au4iodkW7zBwD8yeU22MEOds4AvcxXOqMCR7hyDD8zYlWvjwyov2lmTri//m3nIS.iv.Z0";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDrmz07HwGLmolDv93gK9QUfU7cP207iJA80ZVsoAV+h sverdejot@sverdehost.local"
     ];
