@@ -1,21 +1,29 @@
-name: Build SD Images
+name: Build nodes images
 
 on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-24.04-arm
+    env:
+      S3_BUCKET: ${{ secrets.S3_BUCKET }}
+      AWS_REGION: ${{ vars.AWS_REGION || 'eu-west-1' }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - run: mise run build:installer
-          - run: mise run build:agent 1
-          - run: mise run build:agent 2
-          - run: mise run build:agent 3
+          - { run: mise run build:installer, name: installer, out: installer-master.img }
+          - { run: mise run build:agent 1, name: homelab-1-image, out: homelab-1.img }
+          - { run: mise run build:agent 2, name: homelab-2-image, out: homelab-2.img }
+          - { run: mise run build:agent 3, name: homelab-3-image, out: homelab-3.img }
     steps:
       - uses: actions/checkout@v4
 
@@ -30,3 +38,10 @@ jobs:
           install: false
 
       - run: ${{ matrix.run }}
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.ROLE_ARN }}
+
+      - run: aws s3 cp ${{ matrix.out }} s3://${{ env.S3_BUCKET }}/nodes/latest/

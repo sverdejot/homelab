@@ -5,6 +5,9 @@ FLAKE="nixosConfigurations.homelab-installer.config.system.build.sdImage"
 
 if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
   nix build --extra-experimental-features "nix-command flakes" --accept-flake-config ".#${FLAKE}" -L
+  IMG=$(find -L result -name "*.img.zst" | head -1)
+  nix shell nixpkgs#zstd --command zstd -d "$IMG" -o installer-master.img
+  rm result
 else
   docker run --rm -v "$(pwd)":/app -w /app nixos/nix:latest bash -c "
     set -euo pipefail
