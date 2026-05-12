@@ -17,6 +17,11 @@
     name = "iqn.2016-01.com.homelab:${config.networking.hostName}";
   };
 
+  systemd.services.iscsid.serviceConfig = {
+    PrivateMounts = "yes";
+    BindPaths = "/run/current-system/sw/bin:/bin";
+  };
+
   services.avahi = {
     enable = true;
     nssmdns4 = true;
