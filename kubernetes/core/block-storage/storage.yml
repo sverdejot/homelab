@@ -7,6 +7,10 @@ metadata:
 spec:
   disks:
     nvme:
-      path: /data/longhorn/nvme
+      path: /var/lib/longhorn
+      allowScheduling: true
+      storageReserved: 0%
+    sd:
+      path: /sd
       allowScheduling: true
       storageReserved: 0%
