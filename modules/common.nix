@@ -8,14 +8,26 @@
   networking.firewall = lib.mkForce {
     enable = true;
 
-    allowedTCPPorts = [ 22 80 443 3260 6443 7946 7472 7473 9100 ];
+    allowedTCPPorts = [
+      22                      # ssh
+      80 443                  # ingresses
+      3260                    # open-iccsi // longhorn
+      6443                    # k8s
+      7946 7472 7473          # MetalLB
+      9100                    # Prometheus
+    ];
     allowedTCPPortRanges = [
-      { from = 9500; to = 9600; }
-      { from = 10000; to = 30000; }
+      { from = 10000; to = 10100; }   # longhorn (replicas)
     ];
 
-    allowedUDPPorts = [ 53 8472 7946 ];
-    trustedInterfaces = [ "flannel.1" "cni0" ];
+    allowedUDPPorts = [
+      53                      # core-dns
+      8472 7946               # MetalLB
+    ];
+    trustedInterfaces = [ 
+      "flannel.1"             # MetalLB
+      "cni0"                  # open-iscsi // longhorn
+    ]; 
   };
 
   services.openssh.enable = true;
