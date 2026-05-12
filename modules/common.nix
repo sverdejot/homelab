@@ -7,7 +7,15 @@
 
   networking.firewall = lib.mkForce {
     enable = true;
-    allowedTCPPorts = [ 22 ];
+
+    allowedTCPPorts = [ 22 80 443 3260 6443 7946 7472 7473 9100 ];
+    allowedTCPPortRanges = [
+      { from = 9500; to = 9600; }
+      { from = 10000; to = 30000; }
+    ];
+
+    allowedUDPPorts = [ 53 8472 7946 ];
+    trustedInterfaces = [ "flannel.1" "cni0" ];
   };
 
   services.openssh.enable = true;
