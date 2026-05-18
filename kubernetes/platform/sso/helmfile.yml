@@ -1,18 +1,9 @@
 ---
 repositories:
-  - name: cnpg
-    url: https://cloudnative-pg.github.io/charts
   - name: authentik
     url: https://charts.goauthentik.io
 ---
 releases:
-  - name: db
-    namespace: authentik
-    chart: cnpg/cluster
-    values:
-      - ./values/db.yml
-
-  # TODO: set client TLS for db connection
   - name: authentik
     namespace: authentik
     chart: authentik/authentik
@@ -22,8 +13,33 @@ releases:
       - events:
           - prepare
         showlogs: true
+        command: sh
+        args:
+          - -c
+          - sops -d secrets/postgres.yml | kubectl apply -f -
+      - events:
+          - prepare
+        showlogs: true
+        command: sh
+        args:
+          - -c
+          - sops -d secrets/secret-key.yml | kubectl apply -f -
+      - events:
+          - prepare
+        showlogs: true
         command: "kubectl"
         args:
           - apply
           - -f
-          - resources/db.yml
+          - resources/postgres.yml
+      - events:
+          - postsync
+        showlogs: true
+        command: sh
+        args:
+          - -c
+          - |
+            kubectl wait --for=condition=ready pod -l app.kubernetes.io/component=server -n authentik --timeout=300s
+            POD=$(kubectl get pods -n authentik -l app.kubernetes.io/component=server -o jsonpath='{.items[0].metadata.name}')
+            kubectl cp blueprints/homelab.yaml authentik/$POD:/tmp/homelab.yaml
+            kubectl exec -n authentik $POD -- ak apply_blueprint /tmp/homelab.yaml

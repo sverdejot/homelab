@@ -1,0 +1,64 @@
+version: 1
+metadata:
+  name: homelab-sso
+entries:
+  - model: authentik_core.group
+    identifiers:
+      name: ArgoCD Admins
+    id: argo-admin-group
+
+  - model: authentik_core.group
+    identifiers:
+      name: Grafana Admins
+    id: grafana-admin-group
+
+  - model: authentik_core.group
+    identifiers:
+      name: Grafana Editors
+    id: grafana-editor-group
+
+  - model: authentik_providers_oauth2.oauth2provider
+    identifiers:
+      name: ArgoCD
+    id: argo-provider
+    attrs:
+      client_id: argocd
+      client_secret: h0m3l4b-argocd-secret
+      client_type: confidential
+      redirect_uris: https://gitops.sverdejot.dev/auth/callback
+      signing_key: null
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+
+  - model: authentik_core.application
+    identifiers:
+      slug: argocd
+    id: argo-app
+    attrs:
+      name: ArgoCD
+      slug: argocd
+      provider: !KeyOf argo-provider
+      meta_launch_url: https://gitops.sverdejot.dev
+      policy_engine_mode: any
+
+  - model: authentik_providers_oauth2.oauth2provider
+    identifiers:
+      name: Grafana
+    id: grafana-provider
+    attrs:
+      client_id: grafana
+      client_secret: h0m3l4b-grafana-secret
+      client_type: confidential
+      redirect_uris: https://grafana.homelab.local/login/generic_oauth
+      signing_key: null
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+
+  - model: authentik_core.application
+    identifiers:
+      slug: grafana
+    id: grafana-app
+    attrs:
+      name: Grafana
+      slug: grafana
+      provider: !KeyOf grafana-provider
+      meta_launch_url: https://grafana.homelab.local
+      policy_engine_mode: any
