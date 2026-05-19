@@ -13,6 +13,7 @@ in {
     role = "server";
     tokenFile = "/etc/k3s/token";
     extraFlags = lib.concatStringsSep " " [
+      "--cluster-init"
       "--tls-san=${config.networking.hostName}.local"
       "--tls-san=${ip}"
       "--disable=traefik"

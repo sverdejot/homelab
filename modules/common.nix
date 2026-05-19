@@ -11,8 +11,9 @@
     allowedTCPPorts = [
       22                      # ssh
       80 443                  # ingresses
+      2379 2380               # etcd
       3260                    # open-iccsi // longhorn
-      6443                    # k8s
+      6443 6444               # k8s api-server
       7946 7472 7473          # MetalLB
       9100                    # Prometheus
     ];
@@ -25,6 +26,7 @@
       8472 7946               # MetalLB
     ];
     trustedInterfaces = [ 
+      "lo"                    # loopback
       "flannel.1"             # MetalLB
       "cni0"                  # open-iscsi // longhorn
     ]; 
