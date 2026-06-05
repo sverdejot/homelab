@@ -1,3 +1,4 @@
 creation_rules:
   - path_regex: kubernetes/.*
     age: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+    encrypted_regex: ^(data|stringData)$
