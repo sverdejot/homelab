@@ -3,6 +3,6 @@
 set -euo pipefail
 NODE=${1:?node number required}
 nix run nixpkgs#nixos-rebuild -- switch --flake ".#homelab-${NODE}-image" \
-  --target-host "homelab@192.168.1.$((NODE + 2))" \
-  --build-host "homelab@192.168.1.$((NODE + 2))" \
+  --target-host "homelab@192.168.10.$((NODE + 3))" \
+  --build-host "homelab@192.168.10.$((NODE + 3))" \
   --sudo

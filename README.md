@@ -7,10 +7,10 @@ Lightweight, reproducible K8s cluster on **Raspberry Pi 5** devices, managed dec
 ## Architecture
 
 ```
-homelab-0 (master)  192.168.1.2   NVMe  |  k3s server + Longhorn
-homelab-1 (agent)   192.168.1.3   SD    |  k3s agent
-homelab-2 (agent)   192.168.1.4   SD    |  k3s agent
-homelab-3 (agent)   192.168.1.5   SD    |  k3s agent
+homelab-0 (master)  192.168.10.3   NVMe  |  k3s server + Longhorn
+homelab-1 (agent)   192.168.10.4   SD    |  k3s agent
+homelab-2 (agent)   192.168.10.5   SD    |  k3s agent
+homelab-3 (agent)   192.168.10.6   SD    |  k3s agent
 ```
 
 ## Directory Structure
@@ -96,7 +96,7 @@ This partitions the NVMe, installs NixOS, and reboots into the NVMe system with 
 
 ### 5. Boot agents
 
-Insert agent SD cards and power on. Each agent joins the cluster at `192.168.1.2:6443`.
+Insert agent SD cards and power on. Each agent joins the cluster at `192.168.10.3:6443`.
 
 ### 6. Deploy K8s services
 
@@ -137,8 +137,8 @@ Edit `modules/hosts.nix`:
 ```nix
 {
   nodeCount = 6;    # was 4
-  baseIP = "192.168.1";
-  ipOffset = 2;
+  baseIP = "192.168.10";
+  ipOffset = 3;
   # master.agent definitions stay the same
 }
 ```

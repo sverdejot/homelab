@@ -1,6 +1,6 @@
 ---
 DNS1:
-  192.168.1.1
+  192.168.10.1
 persistentVolumeClaim:
   enabled: true
 ingress:
@@ -11,7 +11,7 @@ ingress:
   hosts:
     - "dns.homelab.local"
 serviceDns:
-  loadBalancerIP: 192.168.1.64
+  loadBalancerIP: 192.168.10.64
   annotations:
     metallb.universe.tf/allow-shared-ip: pihole-svc
   type: LoadBalancer

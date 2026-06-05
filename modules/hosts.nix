@@ -5,11 +5,11 @@ let
     networking.hostName = "homelab-${toString n}";
     networking.useDHCP = false;
     networking.interfaces.end0.ipv4.addresses = [{
-      address = "192.168.1.${toString (n + 2)}";
+      address = "192.168.10.${toString (n + 3)}";
       prefixLength = 24;
     }];
-    networking.defaultGateway = { address = "192.168.1.1"; interface = "end0"; };
-    networking.nameservers = [ "192.168.1.1" ];
+    networking.defaultGateway = { address = "192.168.10.1"; interface = "end0"; };
+    networking.nameservers = [ "192.168.10.1" ];
   };
 
   node = { n, disk, mods ? [ ] }:
