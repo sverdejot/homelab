@@ -25,9 +25,12 @@ entries:
       client_id: argocd
       client_secret: h0m3l4b-argocd-secret
       client_type: confidential
-      redirect_uris: https://gitops.sverdejot.dev/auth/callback
+      redirect_uris:
+        - matching_mode: strict
+          url: https://gitops.sverdejot.dev/auth/callback
       signing_key: null
       authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-invalidation-flow]]
 
   - model: authentik_core.application
     identifiers:
@@ -48,9 +51,12 @@ entries:
       client_id: grafana
       client_secret: h0m3l4b-grafana-secret
       client_type: confidential
-      redirect_uris: https://grafana.homelab.local/login/generic_oauth
+      redirect_uris:
+        - matching_mode: strict
+          url: https://grafana.homelab.local/login/generic_oauth
       signing_key: null
       authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-invalidation-flow]]
 
   - model: authentik_core.application
     identifiers:

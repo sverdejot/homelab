@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: authentik
+  namespace: authentik
+  annotations:
+    cert-manager.io/cluster-issuer: certificate-issuer
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - identity.homelab.local
+      secretName: authentik-tls
+  rules:
+    - host: identity.homelab.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: authentik-server
+                port:
+                  number: 80

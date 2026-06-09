@@ -8,7 +8,7 @@ releases:
     namespace: authentik
     chart: authentik/authentik
     values:
-      - ./values/authentik.yml
+      - ./values.yml
     hooks:
       - events:
           - prepare
@@ -16,22 +16,30 @@ releases:
         command: sh
         args:
           - -c
-          - sops -d secrets/postgres.yml | kubectl apply -f -
+          - |
+            sops -d secrets/authentik-auth.yml | kubectl apply -f -
+            sops -d secrets/secret-key.yml | kubectl apply -f -
       - events:
           - prepare
         showlogs: true
         command: sh
         args:
           - -c
-          - sops -d secrets/secret-key.yml | kubectl apply -f -
+          - |
+            sops -d secrets/postgres.yml | kubectl apply -f -
+            kubectl apply -f resources/postgres.yml -f resources/ingress.yml
       - events:
-          - prepare
+          - postinstall
+          - postupgrade
         showlogs: true
-        command: "kubectl"
+        command: sh
         args:
-          - apply
-          - -f
-          - resources/postgres.yml
+          - -c
+          - |
+            KEY=$(kubectl get secret authentik-secret-key -n authentik -o jsonpath='{.data.secretkey}' | base64 -d)
+            kubectl patch secret authentik -n authentik -p "{\"stringData\":{\"AUTHENTIK_SECRET_KEY\":\"$KEY\"}}"
+            kubectl rollout restart deploy/authentik-server -n authentik
+            kubectl rollout restart deploy/authentik-worker -n authentik
       - events:
           - postsync
         showlogs: true
@@ -41,5 +49,4 @@ releases:
           - |
             kubectl wait --for=condition=ready pod -l app.kubernetes.io/component=server -n authentik --timeout=300s
             POD=$(kubectl get pods -n authentik -l app.kubernetes.io/component=server -o jsonpath='{.items[0].metadata.name}')
-            kubectl cp blueprints/homelab.yaml authentik/$POD:/tmp/homelab.yaml
-            kubectl exec -n authentik $POD -- ak apply_blueprint /tmp/homelab.yaml
+            kubectl exec -n authentik $POD -- ak apply_blueprint homelab.yaml

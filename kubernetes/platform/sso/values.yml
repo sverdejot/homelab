@@ -1,0 +1,44 @@
+authentik:
+  log_level: info
+  postgresql:
+    host: authentik-postgres.authentik.svc.cluster.local
+    port: 5432
+    name: authentik
+    user: postgres
+    password: file:///creds/postgres-password
+  error_reporting:
+    enabled: false
+
+redis:
+  enabled: true
+
+bootstrap:
+  password: file:///creds/bootstrap-password
+
+server:
+  ingress:
+    enabled: false
+  volumeMounts:
+    - name: homelab-blueprint
+      mountPath: /blueprints/homelab.yaml
+      subPath: homelab.yaml
+    - name: authentik-creds
+      mountPath: /creds
+      readOnly: true
+  volumes:
+    - name: homelab-blueprint
+      configMap:
+        name: authentik-blueprint-homelab
+    - name: authentik-creds
+      secret:
+        secretName: authentik-auth
+
+worker:
+  volumeMounts:
+    - name: authentik-creds
+      mountPath: /creds
+      readOnly: true
+  volumes:
+    - name: authentik-creds
+      secret:
+        secretName: authentik-auth
