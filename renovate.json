@@ -1,0 +1,15 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "nix": {
+    "enabled": true
+  },
+  "kubernetes": {
+    "fileMatch": ["kubernetes/(apps|core|platform|shared)/.*\\.ya?ml$"]
+  },
+  "helmfile": {
+    "enabled": true
+  }
+}
