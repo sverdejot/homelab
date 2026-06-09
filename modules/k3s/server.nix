@@ -26,5 +26,6 @@ in {
   fileSystems."/sd" = {
     device = "/dev/mmcblk0p1";
     fsType = "ext4";
+    options = [ "nofail" ];
   };
 }
