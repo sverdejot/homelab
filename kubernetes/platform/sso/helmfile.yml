@@ -19,6 +19,7 @@ releases:
           - |
             sops -d secrets/authentik-auth.yml | kubectl apply -f -
             sops -d secrets/secret-key.yml | kubectl apply -f -
+            kubectl create configmap authentik-blueprint-homelab -n authentik --from-file=homelab.yaml=blueprints/homelab.yaml --dry-run=client -o yaml | kubectl apply -f -
       - events:
           - prepare
         showlogs: true
