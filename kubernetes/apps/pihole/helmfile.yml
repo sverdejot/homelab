@@ -22,6 +22,6 @@ releases:
   - name: externaldns-pihole
     namespace: pihole-system
     chart: kubernetes-sigs/external-dns
-    version: ~1.19
+    version: ~1.21.0
     values:
       - ./values/dns.yml
