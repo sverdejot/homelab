@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+#MISE description="Extract cluster CA cert and add to system trust store so *.homelab.local works without TLS warnings"
+set -euo pipefail
+
+CERT_FILE="/tmp/homelab-ca.crt"
+
+echo "Extracting CA certificate from cluster..."
+kubectl get secret -n cert-manager ca-certificate -o jsonpath='{.data.tls\.crt}' | base64 -d > "$CERT_FILE"
+
+case "$(uname -s)" in
+  Darwin)
+    echo "macOS: adding to System keychain..."
+    sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain "$CERT_FILE"
+    echo "Done. Restart browsers to pick up the new cert."
+    ;;
+  Linux)
+    if [ -f /etc/debian_version ]; then
+      echo "Debian/Ubuntu: installing CA..."
+      sudo cp "$CERT_FILE" /usr/local/share/ca-certificates/homelab-ca.crt
+      sudo update-ca-certificates
+    elif [ -f /etc/arch-release ]; then
+      echo "Arch: installing CA..."
+      sudo trust anchor "$CERT_FILE"
+    elif [ -f /etc/fedora-release ] || [ -f /etc/redhat-release ]; then
+      echo "Fedora/RHEL: installing CA..."
+      sudo cp "$CERT_FILE" /etc/pki/ca-trust/source/anchors/
+      sudo update-ca-trust
+    else
+      echo "Unknown Linux distro. CA cert saved to $CERT_FILE — install manually."
+    fi
+    ;;
+  MINGW*|MSYS*|CYGWIN*)
+    echo "Windows: importing to Trusted Root CA store..."
+    certutil -addstore -user "Root" "$CERT_FILE"
+    echo "Done. Restart browsers to pick up the new cert."
+    ;;
+  *)
+    echo "Unsupported OS. CA cert saved to $CERT_FILE — install manually."
+    ;;
+esac
+
+rm -f "$CERT_FILE"
