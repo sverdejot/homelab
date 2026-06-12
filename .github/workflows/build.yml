@@ -39,7 +39,7 @@ jobs:
 
       - run: ${{ matrix.run }}
 
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ secrets.ROLE_ARN }}
