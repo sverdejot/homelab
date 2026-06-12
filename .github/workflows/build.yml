@@ -33,7 +33,7 @@ jobs:
             extra-experimental-features = nix-command flakes
             accept-flake-config = true
 
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v4
         with:
           install: false
 
