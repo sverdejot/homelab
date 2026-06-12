@@ -1,6 +1,6 @@
 ---
 global:
-  domain: gitops.sverdejot.dev
+  domain: argo.homelab.local
   addPrometheusAnnotations: true
 
 configs:
@@ -9,13 +9,14 @@ configs:
     server.insecure: true
 
   cm:
-    url: https://gitops.sverdejot.dev
+    url: https://argo.homelab.local
     oidc.config: |
       name: Authentik
       issuer: https://identity.homelab.local/application/o/argocd/
       clientID: argocd
       clientSecret: changeme
       requestedScopes: ["openid", "profile", "email", "groups"]
+      insecureSkipVerify: true
 
   rbac:
     policy.default: role:readonly
@@ -26,12 +27,10 @@ server:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hostname: gitops.sverdejot.dev
+    hostname: argo.homelab.local
     annotations:
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-      cert-manager.io/cluster-issuer: sverdejot-dot-dev-issuer
+      cert-manager.io/cluster-issuer: certificate-issuer
     tls:
-      - secretName: argocd-sverdejot-dev-tls
+      - secretName: argocd-homelab-local-tls
         hosts:
-          - gitops.sverdejot.dev
           - argo.homelab.local
