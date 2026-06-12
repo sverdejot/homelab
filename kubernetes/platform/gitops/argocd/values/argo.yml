@@ -16,7 +16,7 @@ configs:
       clientID: argocd
       clientSecret: changeme
       requestedScopes: ["openid", "profile", "email", "groups"]
-      insecureSkipVerify: true
+    oidc.tls.insecure.skip.verify: "true"
 
   rbac:
     policy.default: role:readonly
