@@ -53,7 +53,7 @@ entries:
       client_type: confidential
       redirect_uris:
         - matching_mode: strict
-          url: https://grafana.homelab.local/login/generic_oauth
+          url: https://grafana.home.lab/login/generic_oauth
       signing_key: null
       authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
       invalidation_flow: !Find [authentik_flows.flow, [slug, default-invalidation-flow]]
@@ -66,5 +66,5 @@ entries:
       name: Grafana
       slug: grafana
       provider: !KeyOf grafana-provider
-      meta_launch_url: https://grafana.homelab.local
+      meta_launch_url: https://grafana.home.lab
       policy_engine_mode: any

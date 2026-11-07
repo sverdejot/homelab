@@ -9,10 +9,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - identity.homelab.local
+        - identity.home.lab
       secretName: authentik-tls
   rules:
-    - host: identity.homelab.local
+    - host: identity.home.lab
       http:
         paths:
           - path: /
