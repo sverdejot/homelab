@@ -17,6 +17,7 @@ releases:
         args:
           - -c
           - |
+            kubectl create namespace authentik --dry-run=client -o yaml | kubectl apply -f -
             sops -d secrets/authentik-auth.yml | kubectl apply -f -
             sops -d secrets/secret-key.yml | kubectl apply -f -
             kubectl create configmap authentik-blueprint-homelab -n authentik --from-file=homelab.yaml=blueprints/homelab.yaml --dry-run=client -o yaml | kubectl apply -f -
@@ -29,18 +30,6 @@ releases:
           - |
             sops -d secrets/postgres.yml | kubectl apply -f -
             kubectl apply -f resources/postgres.yml -f resources/ingress.yml
-      - events:
-          - postinstall
-          - postupgrade
-        showlogs: true
-        command: sh
-        args:
-          - -c
-          - |
-            KEY=$(kubectl get secret authentik-secret-key -n authentik -o jsonpath='{.data.secretkey}' | base64 -d)
-            kubectl patch secret authentik -n authentik -p "{\"stringData\":{\"AUTHENTIK_SECRET_KEY\":\"$KEY\"}}"
-            kubectl rollout restart deploy/authentik-server -n authentik
-            kubectl rollout restart deploy/authentik-worker -n authentik
       - events:
           - postsync
         showlogs: true

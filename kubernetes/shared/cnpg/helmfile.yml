@@ -12,5 +12,17 @@ releases:
   - name: postgres-cluster
     namespace: postgres
     chart: cnpg/cluster
+    needs:
+      - cnpg-system/cnpg
     values:
       - ./values.yml
+    hooks:
+      - events:
+          - prepare
+        showlogs: true
+        command: sh
+        args:
+          - -c
+          - |
+            kubectl create namespace postgres --dry-run=client -o yaml | kubectl apply -f -
+            for f in auth/*.yml; do sops -d "$f" | kubectl apply -f -; done

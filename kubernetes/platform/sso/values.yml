@@ -1,3 +1,11 @@
+global:
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secret-key
+          key: secretkey
+
 authentik:
   log_level: info
   postgresql:
