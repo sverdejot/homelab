@@ -28,5 +28,13 @@ cluster:
       superuser: false
       passwordSecret:
         name: umami
+    - name: homebox
+      ensure: present
+      comment: Homebox - Home inventory
+      login: true
+      createdb: true
+      superuser: false
+      passwordSecret:
+        name: homebox
   monitoring:
     enabled: false

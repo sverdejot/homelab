@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: homebox
+    namespace: postgres
+    labels:
+        app: homebox
+        cnpg.io/reload: "true"
+stringData:
+    username: ENC[AES256_GCM,data:yrSThVitvw==,iv:zjr/GW6Wj3sKaBMZkTu9wmw1eJTqyPObbH/IbwLEGIY=,tag:ezrBxKOcA0+1P3WzRF5HwQ==,type:str]
+    password: ENC[AES256_GCM,data:jBxVu9lHN1S+Xmfx2XcpJITpBCx7BUhSjro0Wyjo/GdcRCeEDMbRoIUXTnQeRxZi,iv:A4d9jJ/6PEtnb/75hjurGOeMCIMH0GSERkBQK03zw/Y=,tag:up2X704+DYRZBXUw4eZT6A==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBzR1lncnQ1Y1BkL3VzejdP
+            R0dOeTBSSnowbkY1UUpjUk56S3I2c1BVMVNBCktNMGZtQXVNTUx1RDdISXNVem1P
+            YWNTQTMyNnZrTCtrem5OaE1uY0FUU2sKLS0tIG5Cait4RDlJRmg3UmNYN0cxVGY3
+            bTRKNSsyWVBVZGlSNVZOcHB0SjNOV00K5IEwJVwM6SDBrkrmGYmN7lvnzSL+lNk+
+            atJTPZxwRvFUzYdhrpyWNDYLh0HdyD1yc5ko3uzOnbbuDezDGcAWCg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-11-07T11:08:36Z"
+    mac: ENC[AES256_GCM,data:DSD9pKzq2/Zjsny9tYFuYPHDMVYoezsHgB5CxfGBKJrxfSglFJne3fkEZpbFFyLV92s9xEKsytGxu+AP5bXpLgwW2Eq21H+fDkApqx3j7NnBPH1NWZt0RaUb24sPlMdyjr5QdwRGcKI0q+48B1LKWUfWVVtKknE9VrdgFBAfVGc=,iv:jnDGg998dtiiFYaRVGBcLsfW3Pg7Tt/MUv0aOkJO4JY=,tag:0oarO8dsRk9oLe1tdlnJXw==,type:str]
+    pgp: []
+    encrypted_regex: ^(username|password)$
+    version: 3.9.2

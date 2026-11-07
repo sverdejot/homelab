@@ -1,0 +1,148 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: homebox
+---
+# Attachments (photos, manuals, receipts). Inventory data lives in CNPG.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: homebox
+  name: homebox-pvc
+  namespace: homebox
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: homebox
+  name: homebox
+  namespace: homebox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: homebox
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: homebox
+    spec:
+      securityContext:
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        runAsNonRoot: true
+      containers:
+        - name: homebox
+          image: ghcr.io/sysadminsmedia/homebox:0.27.1-rootless
+          env:
+            - name: HBOX_DATABASE_DRIVER
+              value: postgres
+            - name: HBOX_DATABASE_HOST
+              value: postgres-cluster-rw.postgres
+            - name: HBOX_DATABASE_PORT
+              value: "5432"
+            - name: HBOX_DATABASE_DATABASE
+              value: homebox
+            - name: HBOX_DATABASE_SSL_MODE
+              value: require
+            - name: HBOX_DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: homebox-db-auth
+                  key: username
+            - name: HBOX_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: homebox-db-auth
+                  key: password
+            - name: HBOX_AUTH_API_KEY_PEPPER
+              valueFrom:
+                secretKeyRef:
+                  name: homebox
+                  key: api-key-pepper
+            # Set to "true" only to create the first account, then back to "false".
+            - name: HBOX_OPTIONS_ALLOW_REGISTRATION
+              value: "true"
+            - name: HBOX_OPTIONS_TRUST_PROXY
+              value: "true"
+          ports:
+            - containerPort: 7745
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /api/v1/status
+              port: 7745
+          livenessProbe:
+            httpGet:
+              path: /api/v1/status
+              port: 7745
+            initialDelaySeconds: 15
+          resources:
+            requests:
+              memory: "64Mi"
+            limits:
+              memory: "256Mi"
+          securityContext:
+            allowPrivilegeEscalation: false
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: homebox-pvc
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: homebox
+  name: homebox-svc
+  namespace: homebox
+spec:
+  type: ClusterIP
+  ports:
+    - port: 7745
+      targetPort: 7745
+  selector:
+    app: homebox
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: homebox-ingress
+  namespace: homebox
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 64m
+    cert-manager.io/cluster-issuer: certificate-issuer
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - homebox.home.lab
+      secretName: homebox-tls
+  rules:
+    - host: homebox.home.lab
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: homebox-svc
+                port:
+                  number: 7745
