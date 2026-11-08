@@ -8,3 +8,9 @@ controller:
   ingressClass: nginx
   extraArgs:
     default-ssl-certificate: cert-manager/tls-certificate
+    # Custom error pages (./error-pages): unknown hosts/paths get its 404
+    default-backend-service: ingress-nginx/error-pages
+  config:
+    # Upstream errors replaced by the custom pages. 403/404 from apps are left
+    # alone so their APIs keep returning their own responses.
+    custom-http-errors: "502,503,504"

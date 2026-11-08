@@ -10,3 +10,15 @@ releases:
     version: ~4.15.0
     values:
       - ./values.yml
+    hooks:
+      - events:
+          - prepare
+        showlogs: true
+        command: sh
+        args:
+          - -c
+          - |
+            kubectl create namespace ingress-nginx --dry-run=client -o yaml | kubectl apply -f -
+            kubectl create configmap error-pages -n ingress-nginx --from-file=error-pages/html --from-file=default.conf=error-pages/nginx.conf --dry-run=client -o yaml | kubectl apply --server-side -f -
+            kubectl apply -f error-pages/manifest.yml
+            kubectl rollout restart deploy/error-pages -n ingress-nginx
