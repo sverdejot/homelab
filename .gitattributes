@@ -1,1 +1,2 @@
 .mise/** linguist-vendored
+*.html linguist-detectable=false
