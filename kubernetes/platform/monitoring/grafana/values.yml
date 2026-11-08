@@ -53,3 +53,6 @@ sidecar:
   datasources:
     enabled: true
     searchNamespace: "ALL"
+
+deploymentStrategy:
+  type: Recreate
