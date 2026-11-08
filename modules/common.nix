@@ -16,6 +16,7 @@
       6443 6444               # k8s api-server
       7946 7472 7473          # MetalLB
       9100                    # Prometheus
+      10250                   # kubelet (Prometheus scrapes cAdvisor)
     ];
     allowedTCPPortRanges = [
       { from = 10000; to = 10100; }   # longhorn (replicas)
