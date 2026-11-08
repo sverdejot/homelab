@@ -4,6 +4,7 @@ kind: Namespace
 metadata:
   name: n8n
 ---
+# Config dir (encryption key, binary data). Workflows/credentials live in CNPG.
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -14,6 +15,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: longhorn
   resources:
     requests:
       storage: 2Gi
@@ -37,19 +39,14 @@ spec:
       labels:
         app: n8n
     spec:
-      initContainers:
-        - name: volume-permissions
-          image: busybox:1.38
-          command: ["sh", "-c", "chown 1000:1000 /data"]
-          volumeMounts:
-            - name: n8n-pvc
-              mountPath: /data
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        runAsNonRoot: true
       containers:
-        - command:
-            - /bin/sh
-          args:
-            - -c
-            - sleep 5; n8n start
+        - name: n8n
+          image: n8nio/n8n:2.46.6
           env:
             - name: DB_TYPE
               value: postgresdb
@@ -69,27 +66,59 @@ spec:
                 secretKeyRef:
                   name: n8n-db-auth
                   key: password
-            - name: N8N_PROTOCOL
-              value: http
             - name: N8N_PORT
               value: "5678"
-          image: n8nio/n8n
-          name: n8n
+            - name: N8N_HOST
+              value: n8n.home.lab
+            - name: N8N_EDITOR_BASE_URL
+              value: https://n8n.home.lab/
+            - name: WEBHOOK_URL
+              value: https://n8n.home.lab/
+            - name: N8N_PROXY_HOPS
+              value: "1"
+            - name: GENERIC_TIMEZONE
+              value: Europe/Madrid
+            - name: TZ
+              value: Europe/Madrid
+            - name: N8N_DIAGNOSTICS_ENABLED
+              value: "false"
+            - name: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+              value: "true"
+            # Trust the internal CA so workflows can call *.home.lab services.
+            - name: NODE_EXTRA_CA_CERTS
+              value: /etc/homelab-ca/ca-bundle.crt
           ports:
             - containerPort: 5678
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 5678
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5678
+            initialDelaySeconds: 30
           resources:
             requests:
-              memory: "250Mi"
+              memory: "256Mi"
             limits:
-              memory: "500Mi"
+              memory: "1Gi"
+          securityContext:
+            allowPrivilegeEscalation: false
           volumeMounts:
-            - mountPath: /home/node/.n8n
-              name: n8n-pvc
-      restartPolicy: Always
+            - name: data
+              mountPath: /home/node/.n8n
+            - name: homelab-ca
+              mountPath: /etc/homelab-ca
+              readOnly: true
       volumes:
-        - name: n8n-pvc
+        - name: data
           persistentVolumeClaim:
             claimName: n8n-pvc
+        - name: homelab-ca
+          configMap:
+            name: custom-ca-bundle
+      restartPolicy: Always
 ---
 apiVersion: v1
 kind: Service
@@ -112,10 +141,15 @@ metadata:
   name: n8n-ingress
   namespace: n8n
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 64m
+    cert-manager.io/cluster-issuer: certificate-issuer
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - n8n.home.lab
+      secretName: n8n-tls
   rules:
     - host: n8n.home.lab
       http:
