@@ -7,7 +7,9 @@
     "enabled": true
   },
   "kubernetes": {
-    "fileMatch": ["kubernetes/(apps|core|platform|shared)/.*\\.ya?ml$"]
+    "managerFilePatterns": [
+      "/kubernetes/(apps|core|platform|shared)/.*\\.ya?ml$/"
+    ]
   },
   "helmfile": {
     "enabled": true
