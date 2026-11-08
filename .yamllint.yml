@@ -7,11 +7,13 @@ ignore: |
 rules:
   truthy:
     allowed-values: ['true', 'false']
-    check-keys: False
+    check-keys: false
     level: error
   line-length: disable
   document-start: disable
   comments:
+    require-starting-space: false
     min-spaces-from-content: 1
-  braces:
-    max-spaces-inside: 2
+  comments-indentation: disable
+  braces: disable
+  brackets: disable
