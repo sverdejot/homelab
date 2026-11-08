@@ -1,7 +1,7 @@
 global:
   edition: ce
   hosts:
-    domain: homelab.local
+    domain: home.lab
 
   certificates:
     customCAs:

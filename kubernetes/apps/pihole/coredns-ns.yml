@@ -6,6 +6,6 @@ metadata:
   namespace: kube-system
 data:
   custom.server: |
-    homelab.local:53 {
+    home.lab:53 {
       forward . 192.168.10.64
     }

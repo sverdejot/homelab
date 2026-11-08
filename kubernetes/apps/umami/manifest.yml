@@ -74,7 +74,7 @@ spec:
         - analytics.sverdejot.dev
       secretName: umami-sverdejot-dev-tls
   rules:
-    - host: analytics.homelab.local
+    - host: analytics.home.lab
       http:
         paths:
           - path: /

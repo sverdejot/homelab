@@ -1,6 +1,6 @@
 ---
 global:
-  domain: argo.homelab.local
+  domain: argo.home.lab
   addPrometheusAnnotations: true
 
 configs:
@@ -9,10 +9,10 @@ configs:
     server.insecure: true
 
   cm:
-    url: https://argo.homelab.local
+    url: https://argo.home.lab
     oidc.config: |
       name: Authentik
-      issuer: https://identity.homelab.local/application/o/argocd/
+      issuer: https://identity.home.lab/application/o/argocd/
       clientID: argocd
       clientSecret: changeme
       requestedScopes: ["openid", "profile", "email", "groups"]
@@ -27,10 +27,10 @@ server:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hostname: argo.homelab.local
+    hostname: argo.home.lab
     annotations:
       cert-manager.io/cluster-issuer: certificate-issuer
     tls:
       - secretName: argocd-homelab-local-tls
         hosts:
-          - argo.homelab.local
+          - argo.home.lab

@@ -10,4 +10,4 @@ spec:
     name: certificate-issuer
     kind: ClusterIssuer
   dnsNames:
-    - "*.homelab.local"
+    - "*.home.lab"

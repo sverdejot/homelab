@@ -79,7 +79,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: cloudbeaver.homelab.local
+    - host: cloudbeaver.home.lab
       http:
         paths:
           - path: /

@@ -80,7 +80,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: registry.homelab.local
+    - host: registry.home.lab
       http:
         paths:
           - path: /

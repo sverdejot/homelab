@@ -4,4 +4,4 @@ longhornUI:
 ingress:
   enabled: true
   ingressClassName: nginx
-  host: longhorn.homelab.local
+  host: longhorn.home.lab

@@ -9,7 +9,7 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
   hosts:
-    - "dns.homelab.local"
+    - "dns.home.lab"
 serviceDns:
   loadBalancerIP: 192.168.10.64
   annotations:

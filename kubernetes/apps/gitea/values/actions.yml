@@ -9,12 +9,12 @@ statefulset:
     tag: dind
     extraVolumeMounts:
       - name: custom-ca-bundle
-        mountPath: /etc/docker/certs.d/registry.homelab.local
+        mountPath: /etc/docker/certs.d/registry.home.lab
         readOnly: true
   actRunner:
     extraVolumeMounts:
       - name: custom-ca-bundle
-        mountPath: /etc/docker/certs.d/registry.homelab.local
+        mountPath: /etc/docker/certs.d/registry.home.lab
         readOnly: true
     config: |
       container:

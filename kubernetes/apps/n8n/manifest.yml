@@ -117,7 +117,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: n8n.homelab.local
+    - host: n8n.home.lab
       http:
         paths:
           - path: /

@@ -6,21 +6,21 @@ ingress:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
   ingressClassName: nginx
   hosts:
-    - grafana.homelab.local
+    - grafana.home.lab
 
 persistence:
   enabled: true
   size: 1Gi
 
 env:
-  GF_SERVER_ROOT_URL: "https://grafana.homelab.local"
+  GF_SERVER_ROOT_URL: "https://grafana.home.lab"
   GF_AUTH_GENERIC_OIDC_ENABLED: "true"
   GF_AUTH_GENERIC_OIDC_NAME: "Authentik"
   GF_AUTH_GENERIC_OIDC_CLIENT_ID: "grafana"
   GF_AUTH_GENERIC_OIDC_CLIENT_SECRET: "changeme" # Should be in a Secret
-  GF_AUTH_GENERIC_OIDC_AUTH_URL: "https://identity.homelab.local/application/o/authorize/"
-  GF_AUTH_GENERIC_OIDC_TOKEN_URL: "https://identity.homelab.local/application/o/token/"
-  GF_AUTH_GENERIC_OIDC_API_URL: "https://identity.homelab.local/application/o/userinfo/"
+  GF_AUTH_GENERIC_OIDC_AUTH_URL: "https://identity.home.lab/application/o/authorize/"
+  GF_AUTH_GENERIC_OIDC_TOKEN_URL: "https://identity.home.lab/application/o/token/"
+  GF_AUTH_GENERIC_OIDC_API_URL: "https://identity.home.lab/application/o/userinfo/"
   GF_AUTH_GENERIC_OIDC_SCOPES: "openid profile email"
   GF_AUTH_GENERIC_OIDC_ROLE_ATTRIBUTE_PATH: "contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'"
   GF_AUTH_ANONYMOUS_ENABLED: "false"

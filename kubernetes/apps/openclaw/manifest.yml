@@ -156,7 +156,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: openclaw.homelab.local
+    - host: openclaw.home.lab
       http:
         paths:
           - path: /

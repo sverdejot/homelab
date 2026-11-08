@@ -2,7 +2,7 @@ server:
   ingress:
     enabled: true
     hosts:
-      - prometheus.homelab.local
+      - prometheus.home.lab
 
   persistentVolume:
     size: 20Gi

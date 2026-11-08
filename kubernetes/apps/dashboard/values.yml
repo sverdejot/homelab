@@ -5,7 +5,7 @@ app:
       app: dashboard
     ingressClassName: nginx
     hosts:
-      - dashboard.homelab.local
+      - dashboard.home.lab
     path: /
     tls:
       # already having tls on the ingress-controller

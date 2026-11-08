@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Extract cluster CA cert and add to system trust store so *.homelab.local works without TLS warnings"
+#MISE description="Extract cluster CA cert and add to system trust store so *.home.lab works without TLS warnings"
 set -euo pipefail
 
 CERT_FILE="/tmp/homelab-ca.crt"

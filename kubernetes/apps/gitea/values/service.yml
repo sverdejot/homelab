@@ -28,7 +28,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-body-size: "512m"
   className: nginx
   hosts:
-    - host: git.homelab.local
+    - host: git.home.lab
       paths:
         - path: /
           pathType: Prefix

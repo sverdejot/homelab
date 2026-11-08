@@ -83,7 +83,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: finance.homelab.local
+    - host: finance.home.lab
       http:
         paths:
           - path: /
