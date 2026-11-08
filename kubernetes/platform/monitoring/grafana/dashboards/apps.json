@@ -1,0 +1,2375 @@
+{
+  "uid": "homelab-apps",
+  "title": "Aplicaciones",
+  "description": "Consumo de RAM y CPU por aplicación",
+  "tags": [
+    "homelab"
+  ],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "refresh": "1m",
+  "schemaVersion": 39,
+  "version": 1,
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "type": "row",
+      "title": "Resumen",
+      "collapsed": false,
+      "id": 1,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "panels": []
+    },
+    {
+      "type": "stat",
+      "title": "RAM de los pods",
+      "description": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum(container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"})",
+          "legendFormat": "RAM de los pods",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#3987e5"
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "id": 2,
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "CPU de los pods",
+      "description": "Milicores: 1000m = 1 núcleo. El clúster tiene 16 núcleos.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "1000 * sum(rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[$__rate_interval]))",
+          "legendFormat": "CPU de los pods",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "suffix:m",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#d95926"
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "id": 3,
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "gauge",
+      "title": "RAM del clúster",
+      "description": "Working set de los pods sobre la RAM total de los 4 nodos (32 GB).",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "100 * sum(container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"}) / sum(node_memory_MemTotal_bytes)",
+          "legendFormat": "RAM",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#0ca30c",
+                "value": null
+              },
+              {
+                "color": "#fab219",
+                "value": 70
+              },
+              {
+                "color": "#ec835a",
+                "value": 85
+              },
+              {
+                "color": "#d03b3b",
+                "value": 95
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdMarkers": true,
+        "showThresholdLabels": false,
+        "orientation": "auto",
+        "sizing": "auto",
+        "minVizHeight": 75,
+        "minVizWidth": 75
+      },
+      "id": 4,
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Pods en ejecución",
+      "description": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "count(kube_pod_info{namespace=~\"$namespace\"} * on (namespace, pod) group_left () (kube_pod_status_phase{phase=\"Running\"} == 1))",
+          "legendFormat": "Pods en ejecución",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "id": 5,
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "bargauge",
+      "title": "RAM por namespace",
+      "description": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sort_desc(sum by (namespace) (container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"}))",
+          "legendFormat": "{{namespace}}",
+          "refId": "A",
+          "instant": true,
+          "range": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "min": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#3987e5"
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "valueMode": "text",
+        "namePlacement": "left",
+        "sizing": "manual",
+        "minVizHeight": 16,
+        "maxVizHeight": 22,
+        "minVizWidth": 8
+      },
+      "id": 6,
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 0,
+        "y": 6
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "bargauge",
+      "title": "CPU por namespace",
+      "description": "Media de los últimos 5 minutos, en milicores.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sort_desc(1000 * sum by (namespace) (rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[5m])))",
+          "legendFormat": "{{namespace}}",
+          "refId": "A",
+          "instant": true,
+          "range": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "suffix:m",
+          "min": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#d95926"
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "valueMode": "text",
+        "namePlacement": "left",
+        "sizing": "manual",
+        "minVizHeight": 16,
+        "maxVizHeight": 22,
+        "minVizWidth": 8
+      },
+      "id": 7,
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 6
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "row",
+      "title": "Mapa de calor por namespace",
+      "collapsed": false,
+      "id": 8,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "panels": []
+    },
+    {
+      "type": "status-history",
+      "title": "RAM",
+      "description": "Más claro = más RAM. Escala: 32, 64, 128, 256, 512 MiB, 1 GiB.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (namespace) (container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"})",
+          "legendFormat": "{{namespace}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "interval": "5m",
+      "maxDataPoints": 120,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#0d366b",
+                "value": null
+              },
+              {
+                "color": "#184f95",
+                "value": 33554432
+              },
+              {
+                "color": "#256abf",
+                "value": 67108864
+              },
+              {
+                "color": "#3987e5",
+                "value": 134217728
+              },
+              {
+                "color": "#6da7ec",
+                "value": 268435456
+              },
+              {
+                "color": "#9ec5f4",
+                "value": 536870912
+              },
+              {
+                "color": "#cde2fb",
+                "value": 1073741824
+              }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 85,
+            "lineWidth": 0,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showValue": "never",
+        "rowHeight": 0.85,
+        "colWidth": 0.92,
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "id": 9,
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 0,
+        "y": 18
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "status-history",
+      "title": "CPU",
+      "description": "Más claro = más CPU. Escala: 5, 10, 25, 50, 100, 200 milicores.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "1000 * sum by (namespace) (rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[$__interval]))",
+          "legendFormat": "{{namespace}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "interval": "5m",
+      "maxDataPoints": 120,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "suffix:m",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#5c2208",
+                "value": null
+              },
+              {
+                "color": "#86330e",
+                "value": 5
+              },
+              {
+                "color": "#b04516",
+                "value": 10
+              },
+              {
+                "color": "#d95926",
+                "value": 25
+              },
+              {
+                "color": "#e9784a",
+                "value": 50
+              },
+              {
+                "color": "#f3a07c",
+                "value": 100
+              },
+              {
+                "color": "#fbcdb6",
+                "value": 200
+              }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 85,
+            "lineWidth": 0,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showValue": "never",
+        "rowHeight": 0.85,
+        "colWidth": 0.92,
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "id": 10,
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "row",
+      "title": "Evolución por grupo",
+      "collapsed": false,
+      "id": 11,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "RAM",
+      "description": "Apps: el resto. Plataforma: argocd, authentik, cert-manager, grafana, prometheus, cnpg-system, postgres. Infraestructura: longhorn-system, metallb-system, ingress-nginx, kube-system, pihole-system.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (grupo) (label_replace(label_replace(label_replace(sum by (namespace) (container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\"))",
+          "legendFormat": "{{grupo}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 35,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "lineInterpolation": "smooth",
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "axisBorderShow": false,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "fixed"
+          },
+          "min": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Apps"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3987e5"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Plataforma"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#d95926"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Infraestructura"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#199e70"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 12,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 30
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU",
+      "description": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "1000 * sum by (grupo) (label_replace(label_replace(label_replace(sum by (namespace) (rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[$__rate_interval])), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\"))",
+          "legendFormat": "{{grupo}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "suffix:m",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 35,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "lineInterpolation": "smooth",
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "axisBorderShow": false,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "fixed"
+          },
+          "min": 0,
+          "decimals": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Apps"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3987e5"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Plataforma"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#d95926"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Infraestructura"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#199e70"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 13,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 30
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "row",
+      "title": "Detalle por namespace",
+      "collapsed": false,
+      "id": 14,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 39
+      },
+      "panels": []
+    },
+    {
+      "type": "table",
+      "title": "Consumo por namespace",
+      "description": "Pedida = requests (lo que el scheduler reserva). Barras: RAM hasta 1 GB, CPU hasta 250m.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "label_replace(label_replace(label_replace(sum by (namespace) (container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "legendFormat": "",
+          "refId": "A",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "label_replace(label_replace(label_replace(1000 * sum by (namespace) (rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[5m])), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "legendFormat": "",
+          "refId": "B",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "label_replace(label_replace(label_replace(sum by (namespace) (kube_pod_container_resource_requests{resource=\"memory\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "legendFormat": "",
+          "refId": "C",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "label_replace(label_replace(label_replace(sum by (namespace) (kube_pod_container_resource_limits{resource=\"memory\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "legendFormat": "",
+          "refId": "D",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "label_replace(label_replace(label_replace(1000 * sum by (namespace) (kube_pod_container_resource_requests{resource=\"cpu\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "legendFormat": "",
+          "refId": "E",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "label_replace(label_replace(label_replace(count by (namespace) (kube_pod_info{namespace=~\"$namespace\"} * on (namespace, pod) group_left () (kube_pod_status_phase{phase=\"Running\"} == 1)), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "legendFormat": "",
+          "refId": "F",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "label_replace(label_replace(label_replace(sum by (namespace) (round(increase(kube_pod_container_status_restarts_total{namespace=~\"$namespace\"}[$__range]))), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "legendFormat": "",
+          "refId": "G",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {
+              "namespace": 0,
+              "grupo": 1,
+              "Value #A": 2,
+              "Value #B": 3,
+              "Value #C": 4,
+              "Value #D": 5,
+              "Value #E": 6,
+              "Value #F": 7,
+              "Value #G": 8
+            },
+            "renameByName": {
+              "namespace": "Namespace",
+              "grupo": "Grupo",
+              "Value #A": "RAM",
+              "Value #B": "CPU",
+              "Value #C": "RAM pedida",
+              "Value #D": "RAM límite",
+              "Value #E": "CPU pedida",
+              "Value #F": "Pods",
+              "Value #G": "Reinicios"
+            },
+            "includeByName": {}
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Namespace",
+                "Grupo",
+                "RAM",
+                "CPU",
+                "RAM pedida",
+                "RAM límite",
+                "CPU pedida",
+                "Pods",
+                "Reinicios"
+              ]
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": false,
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Grupo"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "Apps": {
+                        "color": "#3987e5",
+                        "index": 0
+                      },
+                      "Plataforma": {
+                        "color": "#d95926",
+                        "index": 1
+                      },
+                      "Infraestructura": {
+                        "color": "#199e70",
+                        "index": 2
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RAM"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge",
+                  "mode": "gradient",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3987e5"
+                }
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 1073741824
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "suffix:m"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge",
+                  "mode": "gradient",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#d95926"
+                }
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 250
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RAM pedida"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#898781"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RAM límite"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#898781"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU pedida"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "suffix:m"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#898781"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pods"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Reinicios"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#898781",
+                      "value": null
+                    },
+                    {
+                      "color": "#ec835a",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "md",
+        "sortBy": [
+          {
+            "displayName": "RAM",
+            "desc": true
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "id": 15,
+      "gridPos": {
+        "h": 13,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "row",
+      "title": "Workloads (filtra un namespace arriba)",
+      "collapsed": false,
+      "id": 16,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 53
+      },
+      "panels": []
+    },
+    {
+      "type": "bargauge",
+      "title": "RAM por workload",
+      "description": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sort_desc(sum by (namespace, workload) ((sum by (namespace, pod) (container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"})) * on (namespace, pod) group_left (workload) (label_replace(max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind!~\"ReplicaSet|<none>\"}, \"workload\", \"$1\", \"owner_name\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"<none>\"}, \"workload\", \"$1\", \"pod\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.+)\") * on (namespace, replicaset) group_left (workload) max by (namespace, replicaset, workload) (label_replace(kube_replicaset_owner, \"workload\", \"$1\", \"owner_name\", \"(.+)\"))), \"workload\", \"instance-manager\", \"workload\", \"instance-manager-.+\"))))",
+          "legendFormat": "{{namespace}} / {{workload}}",
+          "refId": "A",
+          "instant": true,
+          "range": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "min": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#3987e5"
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "valueMode": "text",
+        "namePlacement": "left",
+        "sizing": "manual",
+        "minVizHeight": 16,
+        "maxVizHeight": 22,
+        "minVizWidth": 8
+      },
+      "id": 17,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 54
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "bargauge",
+      "title": "CPU por workload",
+      "description": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sort_desc(sum by (namespace, workload) ((1000 * sum by (namespace, pod) (rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[5m]))) * on (namespace, pod) group_left (workload) (label_replace(max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind!~\"ReplicaSet|<none>\"}, \"workload\", \"$1\", \"owner_name\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"<none>\"}, \"workload\", \"$1\", \"pod\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.+)\") * on (namespace, replicaset) group_left (workload) max by (namespace, replicaset, workload) (label_replace(kube_replicaset_owner, \"workload\", \"$1\", \"owner_name\", \"(.+)\"))), \"workload\", \"instance-manager\", \"workload\", \"instance-manager-.+\"))))",
+          "legendFormat": "{{namespace}} / {{workload}}",
+          "refId": "A",
+          "instant": true,
+          "range": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "suffix:m",
+          "min": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#d95926"
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "valueMode": "text",
+        "namePlacement": "left",
+        "sizing": "manual",
+        "minVizHeight": 16,
+        "maxVizHeight": 22,
+        "minVizWidth": 8
+      },
+      "id": 18,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 54
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "table",
+      "title": "Uso frente a requests",
+      "description": "Pico = máximo en el rango de tiempo elegido. Referencia para fijar requests (≈ uso normal) y límites (> pico).",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (namespace, workload) ((sum by (namespace, pod) (container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"})) * on (namespace, pod) group_left (workload) (label_replace(max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind!~\"ReplicaSet|<none>\"}, \"workload\", \"$1\", \"owner_name\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"<none>\"}, \"workload\", \"$1\", \"pod\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.+)\") * on (namespace, replicaset) group_left (workload) max by (namespace, replicaset, workload) (label_replace(kube_replicaset_owner, \"workload\", \"$1\", \"owner_name\", \"(.+)\"))), \"workload\", \"instance-manager\", \"workload\", \"instance-manager-.+\")))",
+          "legendFormat": "",
+          "refId": "A",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max_over_time((sum by (namespace, workload) ((sum by (namespace, pod) (container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"})) * on (namespace, pod) group_left (workload) (label_replace(max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind!~\"ReplicaSet|<none>\"}, \"workload\", \"$1\", \"owner_name\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"<none>\"}, \"workload\", \"$1\", \"pod\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.+)\") * on (namespace, replicaset) group_left (workload) max by (namespace, replicaset, workload) (label_replace(kube_replicaset_owner, \"workload\", \"$1\", \"owner_name\", \"(.+)\"))), \"workload\", \"instance-manager\", \"workload\", \"instance-manager-.+\"))))[$__range:5m])",
+          "legendFormat": "",
+          "refId": "B",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (namespace, workload) ((sum by (namespace, pod) (kube_pod_container_resource_requests{resource=\"memory\",namespace=~\"$namespace\"})) * on (namespace, pod) group_left (workload) (label_replace(max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind!~\"ReplicaSet|<none>\"}, \"workload\", \"$1\", \"owner_name\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"<none>\"}, \"workload\", \"$1\", \"pod\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.+)\") * on (namespace, replicaset) group_left (workload) max by (namespace, replicaset, workload) (label_replace(kube_replicaset_owner, \"workload\", \"$1\", \"owner_name\", \"(.+)\"))), \"workload\", \"instance-manager\", \"workload\", \"instance-manager-.+\")))",
+          "legendFormat": "",
+          "refId": "C",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (namespace, workload) ((sum by (namespace, pod) (kube_pod_container_resource_limits{resource=\"memory\",namespace=~\"$namespace\"})) * on (namespace, pod) group_left (workload) (label_replace(max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind!~\"ReplicaSet|<none>\"}, \"workload\", \"$1\", \"owner_name\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"<none>\"}, \"workload\", \"$1\", \"pod\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.+)\") * on (namespace, replicaset) group_left (workload) max by (namespace, replicaset, workload) (label_replace(kube_replicaset_owner, \"workload\", \"$1\", \"owner_name\", \"(.+)\"))), \"workload\", \"instance-manager\", \"workload\", \"instance-manager-.+\")))",
+          "legendFormat": "",
+          "refId": "D",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (namespace, workload) ((1000 * sum by (namespace, pod) (rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[5m]))) * on (namespace, pod) group_left (workload) (label_replace(max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind!~\"ReplicaSet|<none>\"}, \"workload\", \"$1\", \"owner_name\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"<none>\"}, \"workload\", \"$1\", \"pod\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.+)\") * on (namespace, replicaset) group_left (workload) max by (namespace, replicaset, workload) (label_replace(kube_replicaset_owner, \"workload\", \"$1\", \"owner_name\", \"(.+)\"))), \"workload\", \"instance-manager\", \"workload\", \"instance-manager-.+\")))",
+          "legendFormat": "",
+          "refId": "E",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max_over_time((sum by (namespace, workload) ((1000 * sum by (namespace, pod) (rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[5m]))) * on (namespace, pod) group_left (workload) (label_replace(max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind!~\"ReplicaSet|<none>\"}, \"workload\", \"$1\", \"owner_name\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"<none>\"}, \"workload\", \"$1\", \"pod\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.+)\") * on (namespace, replicaset) group_left (workload) max by (namespace, replicaset, workload) (label_replace(kube_replicaset_owner, \"workload\", \"$1\", \"owner_name\", \"(.+)\"))), \"workload\", \"instance-manager\", \"workload\", \"instance-manager-.+\"))))[$__range:5m])",
+          "legendFormat": "",
+          "refId": "F",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (namespace, workload) ((1000 * sum by (namespace, pod) (kube_pod_container_resource_requests{resource=\"cpu\",namespace=~\"$namespace\"})) * on (namespace, pod) group_left (workload) (label_replace(max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind!~\"ReplicaSet|<none>\"}, \"workload\", \"$1\", \"owner_name\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"<none>\"}, \"workload\", \"$1\", \"pod\", \"(.+)\")) or max by (namespace, pod, workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.+)\") * on (namespace, replicaset) group_left (workload) max by (namespace, replicaset, workload) (label_replace(kube_replicaset_owner, \"workload\", \"$1\", \"owner_name\", \"(.+)\"))), \"workload\", \"instance-manager\", \"workload\", \"instance-manager-.+\")))",
+          "legendFormat": "",
+          "refId": "G",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {
+              "namespace": 0,
+              "workload": 1,
+              "Value #A": 2,
+              "Value #B": 3,
+              "Value #C": 4,
+              "Value #D": 5,
+              "Value #E": 6,
+              "Value #F": 7,
+              "Value #G": 8
+            },
+            "renameByName": {
+              "namespace": "Namespace",
+              "workload": "Workload",
+              "Value #A": "RAM",
+              "Value #B": "RAM pico",
+              "Value #C": "RAM pedida",
+              "Value #D": "RAM límite",
+              "Value #E": "CPU",
+              "Value #F": "CPU pico",
+              "Value #G": "CPU pedida"
+            },
+            "includeByName": {}
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Namespace",
+                "Workload",
+                "RAM",
+                "RAM pico",
+                "RAM pedida",
+                "RAM límite",
+                "CPU",
+                "CPU pico",
+                "CPU pedida"
+              ]
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": false,
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RAM"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge",
+                  "mode": "gradient",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3987e5"
+                }
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 1073741824
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RAM pico"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RAM pedida"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#898781"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RAM límite"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#898781"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "suffix:m"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge",
+                  "mode": "gradient",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#d95926"
+                }
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 250
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU pico"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "suffix:m"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU pedida"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "suffix:m"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#898781"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "md",
+        "sortBy": [
+          {
+            "displayName": "RAM pico",
+            "desc": true
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "id": 19,
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 64
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "table",
+      "title": "Pods",
+      "description": "Reinicios totales desde que se creó el pod.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (namespace, pod) (container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"}) * on (namespace, pod) group_left (node) max by (namespace, pod, node) (kube_pod_info)",
+          "legendFormat": "",
+          "refId": "A",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "1000 * sum by (namespace, pod) (rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[5m]))",
+          "legendFormat": "",
+          "refId": "B",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (namespace, pod) (kube_pod_container_status_restarts_total{namespace=~\"$namespace\"}) * on (namespace, pod) group_left () max by (namespace, pod) (kube_pod_info{namespace=~\"$namespace\"} * on (namespace, pod) group_left () (kube_pod_status_phase{phase=\"Running\"} == 1))",
+          "legendFormat": "",
+          "refId": "C",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {
+              "namespace": 0,
+              "pod": 1,
+              "node": 2,
+              "Value #A": 3,
+              "Value #B": 4,
+              "Value #C": 5
+            },
+            "renameByName": {
+              "namespace": "Namespace",
+              "pod": "Pod",
+              "node": "Nodo",
+              "Value #A": "RAM",
+              "Value #B": "CPU",
+              "Value #C": "Reinicios"
+            },
+            "includeByName": {}
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Namespace",
+                "Pod",
+                "Nodo",
+                "RAM",
+                "CPU",
+                "Reinicios"
+              ]
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": false,
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Nodo"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "homelab-0": {
+                        "color": "#3987e5",
+                        "index": 0
+                      },
+                      "homelab-1": {
+                        "color": "#d95926",
+                        "index": 1
+                      },
+                      "homelab-2": {
+                        "color": "#199e70",
+                        "index": 2
+                      },
+                      "homelab-3": {
+                        "color": "#c98500",
+                        "index": 3
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RAM"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge",
+                  "mode": "gradient",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3987e5"
+                }
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 1073741824
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "suffix:m"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge",
+                  "mode": "gradient",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#d95926"
+                }
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 250
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Reinicios"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#898781",
+                      "value": null
+                    },
+                    {
+                      "color": "#ec835a",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "md",
+        "sortBy": [
+          {
+            "displayName": "RAM",
+            "desc": true
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "id": 20,
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 76
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "row",
+      "title": "Estabilidad",
+      "collapsed": true,
+      "id": 21,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 88
+      },
+      "panels": [
+        {
+          "type": "timeseries",
+          "title": "Reinicios de contenedores",
+          "description": "",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "expr": "sum by (namespace, pod) (round(increase(kube_pod_container_status_restarts_total{namespace=~\"$namespace\"}[$__rate_interval]))) > 0",
+              "legendFormat": "{{namespace}} / {{pod}}",
+              "refId": "A",
+              "range": true,
+              "instant": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true,
+                "lineInterpolation": "smooth",
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                },
+                "axisBorderShow": false,
+                "axisPlacement": "auto",
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "color": {
+                "mode": "palette-classic-by-name"
+              },
+              "min": 0,
+              "decimals": 0
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "id": 22,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 89
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "type": "table",
+          "title": "Último reinicio por falta de memoria (OOMKilled)",
+          "description": "Contenedores cuyo último reinicio fue por superar su límite de memoria.",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "expr": "max by (namespace, pod, container) (kube_pod_container_status_last_terminated_reason{reason=\"OOMKilled\",namespace=~\"$namespace\"}) == 1",
+              "legendFormat": "",
+              "refId": "A",
+              "instant": true,
+              "range": false,
+              "format": "table"
+            }
+          ],
+          "transformations": [
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true
+                },
+                "indexByName": {
+                  "namespace": 0,
+                  "pod": 1,
+                  "container": 2,
+                  "Value #A": 3
+                },
+                "renameByName": {
+                  "namespace": "Namespace",
+                  "pod": "Pod",
+                  "container": "Contenedor"
+                },
+                "includeByName": {}
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Namespace",
+                    "Pod",
+                    "Contenedor"
+                  ]
+                }
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "filterable": false,
+                "cellOptions": {
+                  "type": "auto"
+                }
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "md",
+            "sortBy": [
+              {
+                "displayName": "Pod",
+                "desc": true
+              }
+            ],
+            "footer": {
+              "show": false
+            }
+          },
+          "id": 23,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 89
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        }
+      ]
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "label": "Datasource",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": {},
+        "hide": 2,
+        "refresh": 1,
+        "options": [],
+        "includeAll": false,
+        "multi": false
+      },
+      {
+        "name": "namespace",
+        "label": "Namespace",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "query": {
+          "query": "label_values(kube_pod_info, namespace)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "definition": "label_values(kube_pod_info, namespace)",
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "hide": 0,
+        "options": []
+      }
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "links": [
+    {
+      "title": "Nodos",
+      "type": "link",
+      "url": "/d/homelab-nodes/nodos",
+      "icon": "dashboard",
+      "keepTime": true,
+      "includeVars": false,
+      "targetBlank": false,
+      "tooltip": "",
+      "asDropdown": false,
+      "tags": []
+    }
+  ]
+}

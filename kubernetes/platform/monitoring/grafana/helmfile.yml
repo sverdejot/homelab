@@ -20,3 +20,6 @@ releases:
           - |
             kubectl create namespace grafana --dry-run=client -o yaml | kubectl apply -f -
             sops -d secrets/oidc.yml | kubectl apply -f -
+            kubectl -n grafana create configmap grafana-dashboards-homelab --from-file=dashboards/ --dry-run=client -o yaml \
+              | kubectl label --local -f - grafana_dashboard=1 -o yaml \
+              | kubectl apply --server-side -f -

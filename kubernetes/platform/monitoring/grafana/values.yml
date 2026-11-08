@@ -18,6 +18,9 @@ env:
 # GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET (sops: secrets/oidc.yml, applied by helmfile prepare hook)
 envFromSecret: grafana-oidc-secret
 
+plugins:
+  - volkovlabs-echarts-panel 7.2.5
+
 # Internal homelab CA (trust-manager Bundle) for the backchannel calls to authentik
 extraConfigmapMounts:
   - name: homelab-ca
@@ -26,6 +29,8 @@ extraConfigmapMounts:
     readOnly: true
 
 grafana.ini:
+  users:
+    home_page: /dashboards
   auth:
     disable_login_form: false # break-glass local admin
     signout_redirect_url: https://identity.home.lab/application/o/grafana/end-session/
@@ -53,6 +58,10 @@ sidecar:
   datasources:
     enabled: true
     searchNamespace: "ALL"
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
 
 deploymentStrategy:
   type: Recreate

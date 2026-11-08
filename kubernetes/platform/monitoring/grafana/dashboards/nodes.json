@@ -1,0 +1,2144 @@
+{
+  "uid": "homelab-nodes",
+  "title": "Nodos",
+  "description": "Estado de los nodos del clúster",
+  "tags": [
+    "homelab"
+  ],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "refresh": "1m",
+  "schemaVersion": 39,
+  "version": 1,
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "type": "row",
+      "title": "Estado del clúster",
+      "collapsed": false,
+      "id": 1,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "panels": []
+    },
+    {
+      "type": "volkovlabs-echarts-panel",
+      "title": "CPU",
+      "description": "Un anillo por nodo. El valor de la leyenda se colorea por estado: verde = normal · ámbar = vigilar · naranja = atención · rojo = actuar.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (100 * (1 - avg by (node) (rate(node_cpu_seconds_total{mode=\"idle\",node=~\"$node\",node=\"homelab-0\"}[5m]))))",
+          "legendFormat": "{{node}}",
+          "refId": "A",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (100 * (1 - avg by (node) (rate(node_cpu_seconds_total{mode=\"idle\",node=~\"$node\",node=\"homelab-1\"}[5m]))))",
+          "legendFormat": "{{node}}",
+          "refId": "B",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (100 * (1 - avg by (node) (rate(node_cpu_seconds_total{mode=\"idle\",node=~\"$node\",node=\"homelab-2\"}[5m]))))",
+          "legendFormat": "{{node}}",
+          "refId": "C",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (100 * (1 - avg by (node) (rate(node_cpu_seconds_total{mode=\"idle\",node=~\"$node\",node=\"homelab-3\"}[5m]))))",
+          "legendFormat": "{{node}}",
+          "refId": "D",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "renderer": "svg",
+        "editorMode": "code",
+        "editor": {
+          "format": "auto"
+        },
+        "getOption": "const ORDER = [\"homelab-0\", \"homelab-1\", \"homelab-2\", \"homelab-3\"];\nconst COLORS = {\"homelab-0\": \"#3987e5\", \"homelab-1\": \"#d95926\", \"homelab-2\": \"#199e70\", \"homelab-3\": \"#c98500\"};\nconst MIN = 0, MAX = 100, UNIT = \"%\", DEC = 0;\nconst STATUS = [[-1000000000.0, \"#0ca30c\"], [70, \"#fab219\"], [85, \"#ec835a\"], [95, \"#d03b3b\"]]; // [[threshold, color], ...] ascending\n\nconst vals = {};\ncontext.panel.data.series.forEach((s) => {\n  const f = s.fields.find((x) => x.type === \"number\");\n  if (!f || !f.values.length) { return; }\n  const name = (f.config && f.config.displayNameFromDS) || (f.labels && f.labels.node) || s.name;\n  vals[name] = f.values[f.values.length - 1];\n});\nconst nodes = ORDER.filter((n) => vals[n] !== undefined && vals[n] !== null);\nconst fmt = (v) => (v === undefined || v === null ? \"–\" : v.toFixed(DEC) + UNIT);\nconst level = (v) => { let k = 0; STATUS.forEach((t, i) => { if (v >= t[0]) { k = i; } }); return \"s\" + k; };\nconst rich = { n: { fill: \"#c3c2b7\", fontSize: 12, width: 74 } };\nSTATUS.forEach((t, i) => { rich[\"s\" + i] = { fill: t[1], fontSize: 14, fontWeight: 600 }; });\n\nnodes.forEach((n, i) => { rich[\"d\" + i] = { fill: COLORS[n], fontSize: 14, width: 16 }; });\n\nreturn {\n  backgroundColor: \"transparent\",\n  tooltip: { trigger: \"item\", formatter: (p) => p.name + \": \" + fmt(vals[p.name]) },\n  polar: { radius: [\"20%\", \"74%\"], center: [\"50%\", \"40%\"] },\n  angleAxis: { min: MIN, max: MAX, startAngle: 90, clockwise: true, show: false },\n  radiusAxis: { type: \"category\", data: nodes, show: false, inverse: true },\n  series: [{\n    type: \"bar\", coordinateSystem: \"polar\", roundCap: true, barWidth: \"62%\",\n    showBackground: true, backgroundStyle: { color: \"rgba(255,255,255,0.06)\" },\n    data: nodes.map((n) => ({ name: n, value: Math.min(MAX, Math.max(MIN, vals[n])), itemStyle: { color: COLORS[n] } })),\n  }],\n  graphic: nodes.map((n, i) => ({\n    type: \"text\", left: (i % 2 === 0 ? 6 : 52) + \"%\", top: (i < 2 ? 80 : 90) + \"%\",\n    style: { text: \"{d\" + i + \"|●}{n|\" + n + \"}{\" + level(vals[n]) + \"|\" + fmt(vals[n]) + \"}\", rich: rich, fill: \"#c3c2b7\" },\n  })),\n};",
+        "map": "none",
+        "themeEditor": {
+          "name": "default",
+          "config": "{}"
+        }
+      },
+      "id": 2,
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "volkovlabs-echarts-panel",
+      "title": "RAM",
+      "description": "Un anillo por nodo. El valor de la leyenda se colorea por estado: verde = normal · ámbar = vigilar · naranja = atención · rojo = actuar.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (100 * (1 - node_memory_MemAvailable_bytes{node=~\"$node\",node=\"homelab-0\"} / node_memory_MemTotal_bytes{node=~\"$node\",node=\"homelab-0\"}))",
+          "legendFormat": "{{node}}",
+          "refId": "A",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (100 * (1 - node_memory_MemAvailable_bytes{node=~\"$node\",node=\"homelab-1\"} / node_memory_MemTotal_bytes{node=~\"$node\",node=\"homelab-1\"}))",
+          "legendFormat": "{{node}}",
+          "refId": "B",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (100 * (1 - node_memory_MemAvailable_bytes{node=~\"$node\",node=\"homelab-2\"} / node_memory_MemTotal_bytes{node=~\"$node\",node=\"homelab-2\"}))",
+          "legendFormat": "{{node}}",
+          "refId": "C",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (100 * (1 - node_memory_MemAvailable_bytes{node=~\"$node\",node=\"homelab-3\"} / node_memory_MemTotal_bytes{node=~\"$node\",node=\"homelab-3\"}))",
+          "legendFormat": "{{node}}",
+          "refId": "D",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "renderer": "svg",
+        "editorMode": "code",
+        "editor": {
+          "format": "auto"
+        },
+        "getOption": "const ORDER = [\"homelab-0\", \"homelab-1\", \"homelab-2\", \"homelab-3\"];\nconst COLORS = {\"homelab-0\": \"#3987e5\", \"homelab-1\": \"#d95926\", \"homelab-2\": \"#199e70\", \"homelab-3\": \"#c98500\"};\nconst MIN = 0, MAX = 100, UNIT = \"%\", DEC = 0;\nconst STATUS = [[-1000000000.0, \"#0ca30c\"], [70, \"#fab219\"], [85, \"#ec835a\"], [95, \"#d03b3b\"]]; // [[threshold, color], ...] ascending\n\nconst vals = {};\ncontext.panel.data.series.forEach((s) => {\n  const f = s.fields.find((x) => x.type === \"number\");\n  if (!f || !f.values.length) { return; }\n  const name = (f.config && f.config.displayNameFromDS) || (f.labels && f.labels.node) || s.name;\n  vals[name] = f.values[f.values.length - 1];\n});\nconst nodes = ORDER.filter((n) => vals[n] !== undefined && vals[n] !== null);\nconst fmt = (v) => (v === undefined || v === null ? \"–\" : v.toFixed(DEC) + UNIT);\nconst level = (v) => { let k = 0; STATUS.forEach((t, i) => { if (v >= t[0]) { k = i; } }); return \"s\" + k; };\nconst rich = { n: { fill: \"#c3c2b7\", fontSize: 12, width: 74 } };\nSTATUS.forEach((t, i) => { rich[\"s\" + i] = { fill: t[1], fontSize: 14, fontWeight: 600 }; });\n\nnodes.forEach((n, i) => { rich[\"d\" + i] = { fill: COLORS[n], fontSize: 14, width: 16 }; });\n\nreturn {\n  backgroundColor: \"transparent\",\n  tooltip: { trigger: \"item\", formatter: (p) => p.name + \": \" + fmt(vals[p.name]) },\n  polar: { radius: [\"20%\", \"74%\"], center: [\"50%\", \"40%\"] },\n  angleAxis: { min: MIN, max: MAX, startAngle: 90, clockwise: true, show: false },\n  radiusAxis: { type: \"category\", data: nodes, show: false, inverse: true },\n  series: [{\n    type: \"bar\", coordinateSystem: \"polar\", roundCap: true, barWidth: \"62%\",\n    showBackground: true, backgroundStyle: { color: \"rgba(255,255,255,0.06)\" },\n    data: nodes.map((n) => ({ name: n, value: Math.min(MAX, Math.max(MIN, vals[n])), itemStyle: { color: COLORS[n] } })),\n  }],\n  graphic: nodes.map((n, i) => ({\n    type: \"text\", left: (i % 2 === 0 ? 6 : 52) + \"%\", top: (i < 2 ? 80 : 90) + \"%\",\n    style: { text: \"{d\" + i + \"|●}{n|\" + n + \"}{\" + level(vals[n]) + \"|\" + fmt(vals[n]) + \"}\", rich: rich, fill: \"#c3c2b7\" },\n  })),\n};",
+        "map": "none",
+        "themeEditor": {
+          "name": "default",
+          "config": "{}"
+        }
+      },
+      "id": 3,
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "volkovlabs-echarts-panel",
+      "title": "Disco",
+      "description": "Un anillo por nodo. El valor de la leyenda se colorea por estado: verde = normal · ámbar = vigilar · naranja = atención · rojo = actuar.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (100 * (1 - node_filesystem_avail_bytes{mountpoint=\"/\",node=~\"$node\",node=\"homelab-0\"} / node_filesystem_size_bytes{mountpoint=\"/\",node=~\"$node\",node=\"homelab-0\"}))",
+          "legendFormat": "{{node}}",
+          "refId": "A",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (100 * (1 - node_filesystem_avail_bytes{mountpoint=\"/\",node=~\"$node\",node=\"homelab-1\"} / node_filesystem_size_bytes{mountpoint=\"/\",node=~\"$node\",node=\"homelab-1\"}))",
+          "legendFormat": "{{node}}",
+          "refId": "B",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (100 * (1 - node_filesystem_avail_bytes{mountpoint=\"/\",node=~\"$node\",node=\"homelab-2\"} / node_filesystem_size_bytes{mountpoint=\"/\",node=~\"$node\",node=\"homelab-2\"}))",
+          "legendFormat": "{{node}}",
+          "refId": "C",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (100 * (1 - node_filesystem_avail_bytes{mountpoint=\"/\",node=~\"$node\",node=\"homelab-3\"} / node_filesystem_size_bytes{mountpoint=\"/\",node=~\"$node\",node=\"homelab-3\"}))",
+          "legendFormat": "{{node}}",
+          "refId": "D",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "renderer": "svg",
+        "editorMode": "code",
+        "editor": {
+          "format": "auto"
+        },
+        "getOption": "const ORDER = [\"homelab-0\", \"homelab-1\", \"homelab-2\", \"homelab-3\"];\nconst COLORS = {\"homelab-0\": \"#3987e5\", \"homelab-1\": \"#d95926\", \"homelab-2\": \"#199e70\", \"homelab-3\": \"#c98500\"};\nconst MIN = 0, MAX = 100, UNIT = \"%\", DEC = 0;\nconst STATUS = [[-1000000000.0, \"#0ca30c\"], [70, \"#fab219\"], [85, \"#ec835a\"], [95, \"#d03b3b\"]]; // [[threshold, color], ...] ascending\n\nconst vals = {};\ncontext.panel.data.series.forEach((s) => {\n  const f = s.fields.find((x) => x.type === \"number\");\n  if (!f || !f.values.length) { return; }\n  const name = (f.config && f.config.displayNameFromDS) || (f.labels && f.labels.node) || s.name;\n  vals[name] = f.values[f.values.length - 1];\n});\nconst nodes = ORDER.filter((n) => vals[n] !== undefined && vals[n] !== null);\nconst fmt = (v) => (v === undefined || v === null ? \"–\" : v.toFixed(DEC) + UNIT);\nconst level = (v) => { let k = 0; STATUS.forEach((t, i) => { if (v >= t[0]) { k = i; } }); return \"s\" + k; };\nconst rich = { n: { fill: \"#c3c2b7\", fontSize: 12, width: 74 } };\nSTATUS.forEach((t, i) => { rich[\"s\" + i] = { fill: t[1], fontSize: 14, fontWeight: 600 }; });\n\nnodes.forEach((n, i) => { rich[\"d\" + i] = { fill: COLORS[n], fontSize: 14, width: 16 }; });\n\nreturn {\n  backgroundColor: \"transparent\",\n  tooltip: { trigger: \"item\", formatter: (p) => p.name + \": \" + fmt(vals[p.name]) },\n  polar: { radius: [\"20%\", \"74%\"], center: [\"50%\", \"40%\"] },\n  angleAxis: { min: MIN, max: MAX, startAngle: 90, clockwise: true, show: false },\n  radiusAxis: { type: \"category\", data: nodes, show: false, inverse: true },\n  series: [{\n    type: \"bar\", coordinateSystem: \"polar\", roundCap: true, barWidth: \"62%\",\n    showBackground: true, backgroundStyle: { color: \"rgba(255,255,255,0.06)\" },\n    data: nodes.map((n) => ({ name: n, value: Math.min(MAX, Math.max(MIN, vals[n])), itemStyle: { color: COLORS[n] } })),\n  }],\n  graphic: nodes.map((n, i) => ({\n    type: \"text\", left: (i % 2 === 0 ? 6 : 52) + \"%\", top: (i < 2 ? 80 : 90) + \"%\",\n    style: { text: \"{d\" + i + \"|●}{n|\" + n + \"}{\" + level(vals[n]) + \"|\" + fmt(vals[n]) + \"}\", rich: rich, fill: \"#c3c2b7\" },\n  })),\n};",
+        "map": "none",
+        "themeEditor": {
+          "name": "default",
+          "config": "{}"
+        }
+      },
+      "id": 4,
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "volkovlabs-echarts-panel",
+      "title": "Pods y reinicios",
+      "description": "Reinicios = reinicios de contenedores en las últimas 24 h, sumados por nodo.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (count by (node) (kube_pod_info{node=~\"$node\",node=\"homelab-0\"} * on (namespace, pod) group_left () (kube_pod_status_phase{phase=\"Running\"} == 1)))",
+          "legendFormat": "pods|{{node}}",
+          "refId": "A",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (count by (node) (kube_pod_info{node=~\"$node\",node=\"homelab-1\"} * on (namespace, pod) group_left () (kube_pod_status_phase{phase=\"Running\"} == 1)))",
+          "legendFormat": "pods|{{node}}",
+          "refId": "B",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (count by (node) (kube_pod_info{node=~\"$node\",node=\"homelab-2\"} * on (namespace, pod) group_left () (kube_pod_status_phase{phase=\"Running\"} == 1)))",
+          "legendFormat": "pods|{{node}}",
+          "refId": "C",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (count by (node) (kube_pod_info{node=~\"$node\",node=\"homelab-3\"} * on (namespace, pod) group_left () (kube_pod_status_phase{phase=\"Running\"} == 1)))",
+          "legendFormat": "pods|{{node}}",
+          "refId": "D",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (sum by (node) (increase(kube_pod_container_status_restarts_total[24h]) * on (namespace, pod) group_left (node) max by (namespace, pod, node) (kube_pod_info{node=~\"$node\",node=\"homelab-0\"})))",
+          "legendFormat": "rst|{{node}}",
+          "refId": "E",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (sum by (node) (increase(kube_pod_container_status_restarts_total[24h]) * on (namespace, pod) group_left (node) max by (namespace, pod, node) (kube_pod_info{node=~\"$node\",node=\"homelab-1\"})))",
+          "legendFormat": "rst|{{node}}",
+          "refId": "F",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (sum by (node) (increase(kube_pod_container_status_restarts_total[24h]) * on (namespace, pod) group_left (node) max by (namespace, pod, node) (kube_pod_info{node=~\"$node\",node=\"homelab-2\"})))",
+          "legendFormat": "rst|{{node}}",
+          "refId": "G",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (sum by (node) (increase(kube_pod_container_status_restarts_total[24h]) * on (namespace, pod) group_left (node) max by (namespace, pod, node) (kube_pod_info{node=~\"$node\",node=\"homelab-3\"})))",
+          "legendFormat": "rst|{{node}}",
+          "refId": "H",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "renderer": "svg",
+        "editorMode": "code",
+        "editor": {
+          "format": "auto"
+        },
+        "getOption": "const ORDER = [\"homelab-0\", \"homelab-1\", \"homelab-2\", \"homelab-3\"];\nconst COLORS = {\"homelab-0\": \"#3987e5\", \"homelab-1\": \"#d95926\", \"homelab-2\": \"#199e70\", \"homelab-3\": \"#c98500\"};\nconst SERIOUS = \"#ec835a\", MUTED = \"#898781\";\nconst pods = {}, rst = {};\ncontext.panel.data.series.forEach((s) => {\n  const f = s.fields.find((x) => x.type === \"number\");\n  if (!f || !f.values.length) { return; }\n  const key = (f.config && f.config.displayNameFromDS) || s.name || \"\";\n  const parts = key.split(\"|\");\n  const v = f.values[f.values.length - 1];\n  if (parts[0] === \"pods\") { pods[parts[1]] = v; } else if (parts[0] === \"rst\") { rst[parts[1]] = v; }\n});\nconst nodes = ORDER.filter((n) => pods[n] !== undefined);\nconst axisY = (i) => ({ type: \"category\", gridIndex: i, data: nodes, inverse: true, axisTick: { show: false },\n                        axisLine: { show: false }, axisLabel: { color: \"#c3c2b7\", fontSize: 12 } });\nconst axisX = (i) => ({ type: \"value\", gridIndex: i, min: 0, show: false });\nconst titleStyle = { color: \"#c3c2b7\", fontSize: 13, fontWeight: 500 };\n\nreturn {\n  backgroundColor: \"transparent\",\n  title: [{ text: \"Pods en ejecución\", left: 8, top: 4, textStyle: titleStyle },\n          { text: \"Reinicios de contenedores (24 h)\", left: 8, top: \"52%\", textStyle: titleStyle }],\n  tooltip: { trigger: \"item\", formatter: (p) => p.name + \": \" + p.value },\n  grid: [{ left: 82, right: 44, top: 34, height: \"36%\" }, { left: 82, right: 44, top: \"60%\", height: \"34%\" }],\n  xAxis: [axisX(0), axisX(1)],\n  yAxis: [axisY(0), axisY(1)],\n  series: [\n    { type: \"bar\", xAxisIndex: 0, yAxisIndex: 0, barWidth: \"56%\",\n      showBackground: true, backgroundStyle: { color: \"rgba(255,255,255,0.05)\", borderRadius: 6 },\n      data: nodes.map((n) => ({ value: pods[n], itemStyle: { color: COLORS[n], borderRadius: 6 } })),\n      label: { show: true, position: \"right\", color: \"#f0efec\", fontSize: 13, fontWeight: 600 } },\n    { type: \"bar\", xAxisIndex: 1, yAxisIndex: 1, barWidth: \"56%\", barMinHeight: 0,\n      showBackground: true, backgroundStyle: { color: \"rgba(255,255,255,0.05)\", borderRadius: 6 },\n      data: nodes.map((n) => ({ value: Math.round(rst[n] || 0), itemStyle: { color: SERIOUS, borderRadius: 6 } })),\n      label: { show: true, position: \"right\", fontSize: 13, fontWeight: 600,\n               formatter: (p) => \"{\" + (p.value > 0 ? \"bad\" : \"ok\") + \"|\" + p.value + \"}\",\n               rich: { bad: { color: SERIOUS, fontSize: 13, fontWeight: 600 }, ok: { color: MUTED, fontSize: 13 } } } },\n  ],\n};",
+        "map": "none",
+        "themeEditor": {
+          "name": "default",
+          "config": "{}"
+        }
+      },
+      "id": 5,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      }
+    },
+    {
+      "type": "volkovlabs-echarts-panel",
+      "title": "Temperatura",
+      "description": "Franjas: ámbar ≥ 70 °C · naranja ≥ 78 °C · rojo ≥ 82 °C. A 80 °C la Pi 5 baja la frecuencia.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (max by (node) (node_thermal_zone_temp{type=\"cpu-thermal\",node=~\"$node\",node=\"homelab-0\"}))",
+          "legendFormat": "{{node}}",
+          "refId": "A",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (max by (node) (node_thermal_zone_temp{type=\"cpu-thermal\",node=~\"$node\",node=\"homelab-1\"}))",
+          "legendFormat": "{{node}}",
+          "refId": "B",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (max by (node) (node_thermal_zone_temp{type=\"cpu-thermal\",node=~\"$node\",node=\"homelab-2\"}))",
+          "legendFormat": "{{node}}",
+          "refId": "C",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (max by (node) (node_thermal_zone_temp{type=\"cpu-thermal\",node=~\"$node\",node=\"homelab-3\"}))",
+          "legendFormat": "{{node}}",
+          "refId": "D",
+          "range": false,
+          "instant": true,
+          "format": "time_series"
+        }
+      ],
+      "options": {
+        "renderer": "svg",
+        "editorMode": "code",
+        "editor": {
+          "format": "auto"
+        },
+        "getOption": "const ORDER = [\"homelab-0\", \"homelab-1\", \"homelab-2\", \"homelab-3\"];\nconst STATUS = [[-1000000000.0, \"#0ca30c\"], [70, \"#fab219\"], [78, \"#ec835a\"], [82, \"#d03b3b\"]]; // [[threshold, color], ...] ascending\nconst MIN = 40, MAX = 90, LIMIT = 80;\n\nconst vals = {};\ncontext.panel.data.series.forEach((s) => {\n  const f = s.fields.find((x) => x.type === \"number\");\n  if (!f || !f.values.length) { return; }\n  const name = (f.config && f.config.displayNameFromDS) || (f.labels && f.labels.node) || s.name;\n  vals[name] = f.values[f.values.length - 1];\n});\nconst nodes = ORDER.filter((n) => vals[n] !== undefined && vals[n] !== null);\nconst statusColor = (v) => { let c = STATUS[0][1]; STATUS.forEach((t) => { if (v >= t[0]) { c = t[1]; } }); return c; };\nconst band = (from, to, color, alpha) => [{ yAxis: from, itemStyle: { color: color, opacity: alpha } }, { yAxis: to }];\n\nreturn {\n  backgroundColor: \"transparent\",\n  grid: { left: 44, right: 12, top: 26, bottom: 26 },\n  tooltip: { trigger: \"item\", formatter: (p) => p.name + \": \" + p.value.toFixed(1) + \" °C\" },\n  xAxis: { type: \"category\", data: nodes, axisTick: { show: false },\n           axisLine: { lineStyle: { color: \"#383835\" } }, axisLabel: { color: \"#c3c2b7\", fontSize: 11 } },\n  yAxis: { type: \"value\", min: MIN, max: MAX, interval: 10,\n           axisLabel: { color: \"#898781\", formatter: \"{value}°\" },\n           splitLine: { lineStyle: { color: \"#2c2c2a\" } } },\n  series: [{\n    type: \"bar\", barWidth: \"30%\", barMaxWidth: 56,\n    data: nodes.map((n) => ({ value: vals[n], itemStyle: { color: statusColor(vals[n]), borderRadius: [8, 8, 0, 0] } })),\n    label: { show: true, position: \"top\", color: \"#f0efec\", fontSize: 13, fontWeight: 600,\n             formatter: (p) => p.value.toFixed(0) + \" °C\" },\n    markArea: { silent: true, data: [\n      band(STATUS[1][0], STATUS[2][0], STATUS[1][1], 0.07),\n      band(STATUS[2][0], STATUS[3][0], STATUS[2][1], 0.09),\n      band(STATUS[3][0], MAX, STATUS[3][1], 0.11),\n    ] },\n    markLine: { silent: true, symbol: \"none\",\n                lineStyle: { color: STATUS[3][1], width: 1.5, type: \"solid\" },\n                label: { formatter: \"80° baja frecuencia\", color: STATUS[3][1], fontSize: 10, position: \"insideEndTop\" },\n                data: [{ yAxis: LIMIT }] },\n  }],\n};",
+        "map": "none",
+        "themeEditor": {
+          "name": "default",
+          "config": "{}"
+        }
+      },
+      "id": 6,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 18,
+        "x": 0,
+        "y": 9
+      }
+    },
+    {
+      "type": "row",
+      "title": "Historial de estado",
+      "collapsed": false,
+      "id": 7,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "panels": []
+    },
+    {
+      "type": "status-history",
+      "title": "CPU",
+      "description": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "100 * (1 - avg by (node) (rate(node_cpu_seconds_total{mode=\"idle\",node=~\"$node\"}[$__interval])))",
+          "legendFormat": "{{node}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "interval": "5m",
+      "maxDataPoints": 120,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#0ca30c",
+                "value": null
+              },
+              {
+                "color": "#fab219",
+                "value": 70
+              },
+              {
+                "color": "#ec835a",
+                "value": 85
+              },
+              {
+                "color": "#d03b3b",
+                "value": 95
+              }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 85,
+            "lineWidth": 0,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showValue": "never",
+        "rowHeight": 0.85,
+        "colWidth": 0.92,
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "id": 8,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 18
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "status-history",
+      "title": "RAM",
+      "description": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "100 * (1 - node_memory_MemAvailable_bytes{node=~\"$node\"} / node_memory_MemTotal_bytes{node=~\"$node\"})",
+          "legendFormat": "{{node}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "interval": "5m",
+      "maxDataPoints": 120,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 0,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#0ca30c",
+                "value": null
+              },
+              {
+                "color": "#fab219",
+                "value": 70
+              },
+              {
+                "color": "#ec835a",
+                "value": 85
+              },
+              {
+                "color": "#d03b3b",
+                "value": 95
+              }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 85,
+            "lineWidth": 0,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showValue": "never",
+        "rowHeight": 0.85,
+        "colWidth": 0.92,
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "id": 9,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 8,
+        "y": 18
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "status-history",
+      "title": "Temperatura",
+      "description": "Cada celda es un intervalo de 5 minutos coloreado por su estado.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (node_thermal_zone_temp{type=\"cpu-thermal\",node=~\"$node\"})",
+          "legendFormat": "{{node}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "interval": "5m",
+      "maxDataPoints": 120,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "decimals": 1,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#0ca30c",
+                "value": null
+              },
+              {
+                "color": "#fab219",
+                "value": 70
+              },
+              {
+                "color": "#ec835a",
+                "value": 78
+              },
+              {
+                "color": "#d03b3b",
+                "value": 82
+              }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 85,
+            "lineWidth": 0,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showValue": "never",
+        "rowHeight": 0.85,
+        "colWidth": 0.92,
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "id": 10,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 18
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "row",
+      "title": "Comparativa",
+      "collapsed": false,
+      "id": 11,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU",
+      "description": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "100 * (1 - avg by (node) (rate(node_cpu_seconds_total{mode=\"idle\",node=~\"$node\"}[$__rate_interval])))",
+          "legendFormat": "{{node}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "lineInterpolation": "smooth",
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisBorderShow": false,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic-by-name"
+          },
+          "min": 0,
+          "max": 100,
+          "decimals": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-0"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3987e5"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#d95926"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#199e70"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-3"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#c98500"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 12,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 25
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "RAM",
+      "description": "Memoria en uso (sin contar caché liberable) sobre los 8 GB de cada nodo.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "100 * (1 - node_memory_MemAvailable_bytes{node=~\"$node\"} / node_memory_MemTotal_bytes{node=~\"$node\"})",
+          "legendFormat": "{{node}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "lineInterpolation": "smooth",
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisBorderShow": false,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic-by-name"
+          },
+          "min": 0,
+          "max": 100,
+          "decimals": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-0"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3987e5"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#d95926"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#199e70"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-3"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#c98500"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 13,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 25
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Temperatura",
+      "description": "La línea roja marca 80 °C, donde la Pi empieza a bajar frecuencia.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "max by (node) (node_thermal_zone_temp{type=\"cpu-thermal\",node=~\"$node\"})",
+          "legendFormat": "{{node}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "lineInterpolation": "smooth",
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisBorderShow": false,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "color": {
+            "mode": "palette-classic-by-name"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "#d03b3b",
+                "value": 80
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-0"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3987e5"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#d95926"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#199e70"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-3"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#c98500"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 14,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 34
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Escritura en disco",
+      "description": "Disco del sistema: SD en los agentes, NVMe en homelab-0. Las escrituras son lo que desgasta la SD.",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (node) (rate(node_disk_written_bytes_total{device=~\"mmcblk[0-9]+|nvme[0-9]+n[0-9]+\",node=~\"$node\"}[$__rate_interval]))",
+          "legendFormat": "{{node}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "showPoints": "never",
+            "spanNulls": true,
+            "lineInterpolation": "smooth",
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisBorderShow": false,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "color": {
+            "mode": "palette-classic-by-name"
+          },
+          "min": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-0"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3987e5"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#d95926"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#199e70"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "homelab-3"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#c98500"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 15,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 34
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      }
+    },
+    {
+      "type": "row",
+      "title": "Más detalle",
+      "collapsed": true,
+      "id": 16,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 43
+      },
+      "panels": [
+        {
+          "type": "timeseries",
+          "title": "Lectura de disco",
+          "description": "",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "expr": "sum by (node) (rate(node_disk_read_bytes_total{device=~\"mmcblk[0-9]+|nvme[0-9]+n[0-9]+\",node=~\"$node\"}[$__rate_interval]))",
+              "legendFormat": "{{node}}",
+              "refId": "A",
+              "range": true,
+              "instant": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps",
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true,
+                "lineInterpolation": "smooth",
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                },
+                "axisBorderShow": false,
+                "axisPlacement": "auto",
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "color": {
+                "mode": "palette-classic-by-name"
+              },
+              "min": 0
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-0"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3987e5"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-1"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#d95926"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-2"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#199e70"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-3"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#c98500"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "id": 17,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 44
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Disco ocupado",
+          "description": "% del tiempo con operaciones en curso. Cerca de 100% = disco saturado.",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "expr": "100 * max by (node) (rate(node_disk_io_time_seconds_total{device=~\"mmcblk[0-9]+|nvme[0-9]+n[0-9]+\",node=~\"$node\"}[$__rate_interval]))",
+              "legendFormat": "{{node}}",
+              "refId": "A",
+              "range": true,
+              "instant": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true,
+                "lineInterpolation": "smooth",
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                },
+                "axisBorderShow": false,
+                "axisPlacement": "auto",
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "color": {
+                "mode": "palette-classic-by-name"
+              },
+              "min": 0,
+              "max": 100,
+              "decimals": 0
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-0"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3987e5"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-1"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#d95926"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-2"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#199e70"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-3"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#c98500"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "id": 18,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 44
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Red: entrada",
+          "description": "",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "expr": "rate(node_network_receive_bytes_total{device=\"end0\",node=~\"$node\"}[$__rate_interval])",
+              "legendFormat": "{{node}}",
+              "refId": "A",
+              "range": true,
+              "instant": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps",
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true,
+                "lineInterpolation": "smooth",
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                },
+                "axisBorderShow": false,
+                "axisPlacement": "auto",
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "color": {
+                "mode": "palette-classic-by-name"
+              },
+              "min": 0
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-0"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3987e5"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-1"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#d95926"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-2"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#199e70"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-3"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#c98500"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "id": 19,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 52
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Red: salida",
+          "description": "",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "expr": "rate(node_network_transmit_bytes_total{device=\"end0\",node=~\"$node\"}[$__rate_interval])",
+              "legendFormat": "{{node}}",
+              "refId": "A",
+              "range": true,
+              "instant": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps",
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true,
+                "lineInterpolation": "smooth",
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                },
+                "axisBorderShow": false,
+                "axisPlacement": "auto",
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "color": {
+                "mode": "palette-classic-by-name"
+              },
+              "min": 0
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-0"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3987e5"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-1"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#d95926"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-2"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#199e70"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-3"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#c98500"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "id": 20,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 52
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Carga por núcleo",
+          "description": "load1 / núcleos. Por encima de 1 hay procesos esperando CPU o disco.",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "expr": "node_load1{node=~\"$node\"} / on (node) count by (node) (node_cpu_seconds_total{mode=\"idle\",node=~\"$node\"})",
+              "legendFormat": "{{node}}",
+              "refId": "A",
+              "range": true,
+              "instant": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true,
+                "lineInterpolation": "smooth",
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                },
+                "axisBorderShow": false,
+                "axisPlacement": "auto",
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "color": {
+                "mode": "palette-classic-by-name"
+              },
+              "min": 0,
+              "decimals": 2
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-0"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3987e5"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-1"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#d95926"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-2"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#199e70"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-3"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#c98500"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "id": 21,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 60
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Espacio libre en /",
+          "description": "",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "expr": "node_filesystem_avail_bytes{mountpoint=\"/\",node=~\"$node\"}",
+              "legendFormat": "{{node}}",
+              "refId": "A",
+              "range": true,
+              "instant": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "gradientMode": "opacity",
+                "showPoints": "never",
+                "spanNulls": true,
+                "lineInterpolation": "smooth",
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                },
+                "axisBorderShow": false,
+                "axisPlacement": "auto",
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "color": {
+                "mode": "palette-classic-by-name"
+              },
+              "min": 0
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-0"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3987e5"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-1"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#d95926"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-2"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#199e70"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "homelab-3"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#c98500"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "id": 22,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 60
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        }
+      ]
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "label": "Datasource",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": {},
+        "hide": 2,
+        "refresh": 1,
+        "options": [],
+        "includeAll": false,
+        "multi": false
+      },
+      {
+        "name": "node",
+        "label": "Nodo",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "query": {
+          "query": "label_values(node_uname_info, node)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "definition": "label_values(node_uname_info, node)",
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "hide": 0,
+        "options": []
+      }
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "links": [
+    {
+      "title": "Aplicaciones",
+      "type": "link",
+      "url": "/d/homelab-apps/aplicaciones",
+      "icon": "dashboard",
+      "keepTime": true,
+      "includeVars": false,
+      "targetBlank": false,
+      "tooltip": "",
+      "asDropdown": false,
+      "tags": []
+    }
+  ]
+}
