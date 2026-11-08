@@ -46,7 +46,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: n8n
-          image: n8nio/n8n:2.46.6
+          image: n8nio/n8n:2.47.2
           env:
             - name: DB_TYPE
               value: postgresdb
