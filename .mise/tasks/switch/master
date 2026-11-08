@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 #MISE description="Apply config changes to master node without reflashing. Usage: mise run switch:master"
 set -euo pipefail
-nix run nixpkgs#nixos-rebuild -- switch --flake ".#homelab-0" \
+
+# --inputs-from . : use nixpkgs pinned in flake.lock instead of re-fetching the registry one
+# --no-reexec     : skip building the target's nixos-rebuild locally (useless from macOS)
+nix run --inputs-from . nixpkgs#nixos-rebuild -- switch --flake ".#homelab-0" \
   --target-host "homelab@192.168.10.3" \
   --build-host "homelab@192.168.10.3" \
+  --no-reexec \
   --sudo

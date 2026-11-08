@@ -1,8 +1,24 @@
 #!/usr/bin/env bash
-#MISE description="Apply config changes to agent node without reflashing. Usage: mise run switch:agent <node-number>"
+#MISE description="Apply config changes to agent nodes without reflashing. Usage: mise run switch:agent [node-number...] (default: 1 2 3)"
 set -euo pipefail
-NODE=${1:?node number required}
-nix run nixpkgs#nixos-rebuild -- switch --flake ".#homelab-${NODE}-image" \
-  --target-host "homelab@192.168.10.$((NODE + 3))" \
-  --build-host "homelab@192.168.10.$((NODE + 3))" \
-  --sudo
+
+NODES=("${@:-1 2 3}")
+# shellcheck disable=SC2206
+NODES=(${NODES[*]})
+
+for NODE in "${NODES[@]}"; do
+  HOST="homelab@192.168.10.$((NODE + 3))"
+  echo "=== homelab-${NODE} (${HOST}) ==="
+
+  # The bootloader install mounts /boot/firmware by label. If udev lost the
+  # symlink (e.g. after an SD hiccup) the switch hangs 90s and fails.
+  ssh "$HOST" 'test -e /dev/disk/by-label/FIRMWARE || sudo udevadm trigger --settle --action=change /dev/mmcblk0p1'
+
+  # --inputs-from . : use nixpkgs pinned in flake.lock instead of re-fetching the registry one
+  # --no-reexec     : skip building the target's nixos-rebuild locally (useless from macOS)
+  nix run --inputs-from . nixpkgs#nixos-rebuild -- switch --flake ".#homelab-${NODE}-image" \
+    --target-host "$HOST" \
+    --build-host "$HOST" \
+    --no-reexec \
+    --sudo
+done
