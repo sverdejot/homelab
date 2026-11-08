@@ -16,3 +16,5 @@ data:
         url: http://prometheus-server.prometheus:80
         isDefault: true
         isEditable: true
+        jsonData:
+          timeInterval: 1m
