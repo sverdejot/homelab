@@ -31,6 +31,21 @@ scrapeConfigs:
       - source_labels: [__name__]
         regex: .+_bucket
         action: drop
+  longhorn:
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: [longhorn-system]
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app, __meta_kubernetes_pod_container_port_name]
+        regex: longhorn-manager;manager
+        action: keep
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        target_label: node
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: longhorn_(volume|disk|node_storage|node_status|node_count|replica)_.+
+        action: keep
 
 # Headers for the nginx auth subrequest (authentik forward-auth, referenced by
 # server.ingress auth-proxy-set-headers): the embedded outpost routes by host.
