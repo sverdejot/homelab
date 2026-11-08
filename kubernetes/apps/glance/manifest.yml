@@ -1,0 +1,128 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: glance
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: glance
+  name: glance
+  namespace: glance
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: glance
+  template:
+    metadata:
+      labels:
+        app: glance
+    spec:
+      securityContext:
+        runAsUser: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+      containers:
+        - name: glance
+          image: glanceapp/glance:v0.8.7
+          env:
+            - name: TZ
+              value: Europe/Madrid
+            # System roots (alpine bundle file) plus the homelab CA
+            - name: SSL_CERT_DIR
+              value: /etc/homelab-ca
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /api/healthz
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /api/healthz
+              port: http
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 20m
+              memory: 48Mi
+            limits:
+              memory: 192Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+            - name: assets
+              mountPath: /app/assets
+            - name: homelab-ca
+              mountPath: /etc/homelab-ca
+      volumes:
+        - name: config
+          configMap:
+            name: glance-config
+        - name: assets
+          configMap:
+            name: glance-assets
+        - name: homelab-ca
+          configMap:
+            name: custom-ca-bundle
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: glance
+  namespace: glance
+spec:
+  selector:
+    app: glance
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+# Headers for the authentik forward-auth subrequest (see core/block-storage)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-forward-auth-headers
+  namespace: glance
+data:
+  X-Forwarded-Host: $http_host
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: glance
+  namespace: glance
+  annotations:
+    cert-manager.io/cluster-issuer: certificate-issuer
+    # authentik forward-auth (embedded outpost, see sso/blueprints/proxy.yaml)
+    nginx.ingress.kubernetes.io/auth-url: http://authentik-server.authentik.svc.cluster.local/outpost.goauthentik.io/auth/nginx
+    nginx.ingress.kubernetes.io/auth-signin: https://$host/outpost.goauthentik.io/start?rd=$scheme://$http_host$escaped_request_uri
+    nginx.ingress.kubernetes.io/auth-response-headers: X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
+    nginx.ingress.kubernetes.io/auth-proxy-set-headers: glance/authentik-forward-auth-headers
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - home.lab
+      secretName: glance-tls
+  rules:
+    - host: home.lab
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: glance
+                port:
+                  name: http

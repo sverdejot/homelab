@@ -1,0 +1,16 @@
+# Deploy: kubectl apply -k .
+# Config and assets become hashed ConfigMaps, so any change rolls the pod.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: glance
+resources:
+  - manifest.yml
+configMapGenerator:
+  - name: glance-config
+    files:
+      - config/glance.yml
+  - name: glance-assets
+    files:
+      - assets/home.css
+      - assets/avatar-dark.svg
+      - assets/avatar-light.svg
