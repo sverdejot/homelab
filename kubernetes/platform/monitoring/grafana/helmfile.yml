@@ -10,3 +10,13 @@ releases:
     version: ~10.5.0
     values:
       - ./values.yml
+    hooks:
+      - events:
+          - prepare
+        showlogs: true
+        command: sh
+        args:
+          - -c
+          - |
+            kubectl create namespace grafana --dry-run=client -o yaml | kubectl apply -f -
+            sops -d secrets/oidc.yml | kubectl apply -f -

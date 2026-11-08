@@ -5,6 +5,9 @@ global:
         secretKeyRef:
           name: authentik-secret-key
           key: secretkey
+  envFrom:
+    - secretRef:
+        name: authentik-oidc-clients
 
 authentik:
   log_level: info
@@ -28,8 +31,7 @@ server:
     enabled: false
   volumeMounts:
     - name: homelab-blueprint
-      mountPath: /blueprints/homelab.yaml
-      subPath: homelab.yaml
+      mountPath: /blueprints/homelab
     - name: authentik-creds
       mountPath: /creds
       readOnly: true
@@ -43,10 +45,15 @@ server:
 
 worker:
   volumeMounts:
+    - name: homelab-blueprint
+      mountPath: /blueprints/homelab
     - name: authentik-creds
       mountPath: /creds
       readOnly: true
   volumes:
+    - name: homelab-blueprint
+      configMap:
+        name: authentik-blueprint-homelab
     - name: authentik-creds
       secret:
         secretName: authentik-auth

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: homebox-oidc
+    namespace: homebox
+    labels:
+        app: homebox
+stringData:
+    client-secret: ENC[AES256_GCM,data:wkOypK1EbnAsh/LfwwMr8HwnnLVUgMRl1MuOvxvJQ+MQBrLJEAa3DkZp+VzFpGezpng5erFmU54p2nn1l+mjlQ==,iv:sm25rgWexiT/sZpr4pwo5bmFJNnP3iQr7Aor70HJekA=,tag:+QGDXyWcrVlGesuvC8aaFw==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBVjJrbHIyQ2VlK29BREo4
+            VjluUjhmK1A2cTllVXdSMGVCNHEwdzlMUjNJCkFCekxsRDYwc0NHMlVHVEdJb3Qx
+            VE5PaHdydWw5aDdIbXc2SE1DMVUrK00KLS0tIEU2Lyt5ZHdOdVNUVHlsbm9jTFNj
+            VkxWR2NTS005ck8vT2NVNmNQMVZuWmsK5VYD+CNjVwHkdAXX6X6dgji+i4TIgwhk
+            eCW2wNpOcfUjTEkcxg4iQ31pbabKIfZ8JEFwjXs+3o7DkA/rQwdQhw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-11-07T12:20:19Z"
+    mac: ENC[AES256_GCM,data:I+z/xWESQNdo7x0cwHHsaVkErMdJ0OdD18n97uF2Hef8u4VD2RfqlC2MNbs9wpPu1/kvDStz2yEQt2MQy6Hm+zdsIPmJd0kuR0LNWu5LjAd6s1+XYSs03/kJJ1/oWBMLJIgR8ZpTRQnTFrkmZvYo3EnttTir87f33N7IMhoP0+w=,iv:1HCOUorvRY1wTfK8dPZlys6Jpvw0RPMDR4ct1rT9Dm4=,tag:qrx0taUa1dI90lRg49SOnQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2

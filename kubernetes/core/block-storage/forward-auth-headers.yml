@@ -1,0 +1,11 @@
+# Headers added to the nginx auth subrequest for authentik forward-auth
+# (ingress annotation auth-proxy-set-headers; must live in the ingress ns).
+# The embedded outpost picks the provider by host, and the auth-url Host is the
+# authentik service, so pass the original host along.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-forward-auth-headers
+  namespace: longhorn-system
+data:
+  X-Forwarded-Host: $http_host

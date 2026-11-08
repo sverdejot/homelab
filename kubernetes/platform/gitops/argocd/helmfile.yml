@@ -7,8 +7,19 @@ releases:
   - name: argocd
     namespace: argocd
     chart: argo/argo-cd
+    version: 9.5.21
     values:
       - ./values/argo.yml
+    hooks:
+      - events:
+          - prepare
+        showlogs: true
+        command: sh
+        args:
+          - -c
+          - |
+            kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+            sops -d secrets/oidc-authentik.yml | kubectl apply -f -
 
   - name: argocd-image-updates
     namespace: argocd

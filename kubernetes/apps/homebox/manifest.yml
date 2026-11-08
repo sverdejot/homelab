@@ -73,16 +73,48 @@ spec:
                 secretKeyRef:
                   name: homebox
                   key: api-key-pepper
-            # Set to "true" only to create the first account, then back to "false".
+            # Accounts are provisioned on first OIDC login; no self sign-up.
             - name: HBOX_OPTIONS_ALLOW_REGISTRATION
+              value: "false"
+            # Local credentials kept as break-glass if authentik is down.
+            - name: HBOX_OPTIONS_ALLOW_LOCAL_LOGIN
               value: "true"
             - name: HBOX_OPTIONS_TRUST_PROXY
               value: "true"
+            - name: HBOX_OPTIONS_HOSTNAME
+              value: homebox.home.lab
+            # SSO via authentik (blueprints/homebox.yaml)
+            - name: HBOX_OIDC_ENABLED
+              value: "true"
+            - name: HBOX_OIDC_ISSUER_URL
+              value: https://identity.home.lab/application/o/homebox/
+            - name: HBOX_OIDC_CLIENT_ID
+              value: homebox
+            - name: HBOX_OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: homebox-oidc
+                  key: client-secret
+            - name: HBOX_OIDC_SCOPE
+              value: openid profile email
+            - name: HBOX_OIDC_ALLOWED_GROUPS
+              value: homelab-admins,homelab-users
+            - name: HBOX_OIDC_BUTTON_TEXT
+              value: Sign in with authentik
+            # Trust the internal CA (trust-manager Bundle custom-ca-bundle) for
+            # OIDC discovery; system roots stay available via SSL_CERT_DIR.
+            - name: SSL_CERT_FILE
+              value: /etc/homelab-ca/ca-bundle.crt
+            - name: SSL_CERT_DIR
+              value: /etc/ssl/certs
           ports:
             - containerPort: 7745
           volumeMounts:
             - name: data
               mountPath: /data
+            - name: homelab-ca
+              mountPath: /etc/homelab-ca
+              readOnly: true
           readinessProbe:
             httpGet:
               path: /api/v1/status
@@ -103,6 +135,9 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: homebox-pvc
+        - name: homelab-ca
+          configMap:
+            name: custom-ca-bundle
       restartPolicy: Always
 ---
 apiVersion: v1

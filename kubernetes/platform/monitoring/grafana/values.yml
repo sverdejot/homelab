@@ -14,24 +14,40 @@ persistence:
 
 env:
   GF_SERVER_ROOT_URL: "https://grafana.home.lab"
-  GF_AUTH_GENERIC_OIDC_ENABLED: "true"
-  GF_AUTH_GENERIC_OIDC_NAME: "Authentik"
-  GF_AUTH_GENERIC_OIDC_CLIENT_ID: "grafana"
-  GF_AUTH_GENERIC_OIDC_CLIENT_SECRET: "changeme" # Should be in a Secret
-  GF_AUTH_GENERIC_OIDC_AUTH_URL: "https://identity.home.lab/application/o/authorize/"
-  GF_AUTH_GENERIC_OIDC_TOKEN_URL: "https://identity.home.lab/application/o/token/"
-  GF_AUTH_GENERIC_OIDC_API_URL: "https://identity.home.lab/application/o/userinfo/"
-  GF_AUTH_GENERIC_OIDC_SCOPES: "openid profile email"
-  GF_AUTH_GENERIC_OIDC_ROLE_ATTRIBUTE_PATH: "contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'"
-  GF_AUTH_ANONYMOUS_ENABLED: "false"
+
+# GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET (sops: secrets/oidc.yml, applied by helmfile prepare hook)
+envFromSecret: grafana-oidc-secret
+
+# Internal homelab CA (trust-manager Bundle) for the backchannel calls to authentik
+extraConfigmapMounts:
+  - name: homelab-ca
+    configMap: custom-ca-bundle
+    mountPath: /etc/grafana/ca
+    readOnly: true
 
 grafana.ini:
-  auth.generic_oidc:
+  auth:
+    disable_login_form: false # break-glass local admin
+    signout_redirect_url: https://identity.home.lab/application/o/grafana/end-session/
+  auth.anonymous:
+    enabled: false
+  auth.generic_oauth:
     enabled: true
     name: Authentik
-  auth:
-    disable_login_form: false
-    anonymous: false
+    client_id: grafana
+    scopes: openid profile email
+    auth_url: https://identity.home.lab/application/o/authorize/
+    token_url: https://identity.home.lab/application/o/token/
+    api_url: https://identity.home.lab/application/o/userinfo/
+    use_pkce: true
+    allow_sign_up: true
+    login_attribute_path: preferred_username
+    name_attribute_path: name
+    email_attribute_path: email
+    role_attribute_path: contains(groups, 'homelab-admins') && 'GrafanaAdmin' || 'Viewer'
+    role_attribute_strict: false
+    allow_assign_grafana_admin: true
+    tls_client_ca: /etc/grafana/ca/ca-bundle.crt
 
 sidecar:
   datasources:

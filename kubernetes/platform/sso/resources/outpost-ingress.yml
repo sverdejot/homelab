@@ -1,0 +1,52 @@
+# Routes /outpost.goauthentik.io on forward-auth protected hosts to the
+# authentik embedded outpost (inside authentik-server). Must have no auth-url
+# annotation itself. TLS secrets live in the app namespaces (created by the
+# app ingresses); nginx serves the host's cert regardless, so no tls block here.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: authentik-outpost-forward-auth
+  namespace: authentik
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: longhorn.home.lab
+      http:
+        paths:
+          - path: /outpost.goauthentik.io
+            pathType: Prefix
+            backend:
+              service:
+                name: authentik-server
+                port:
+                  number: 80
+    - host: prometheus.home.lab
+      http:
+        paths:
+          - path: /outpost.goauthentik.io
+            pathType: Prefix
+            backend:
+              service:
+                name: authentik-server
+                port:
+                  number: 80
+    - host: dns.home.lab
+      http:
+        paths:
+          - path: /outpost.goauthentik.io
+            pathType: Prefix
+            backend:
+              service:
+                name: authentik-server
+                port:
+                  number: 80
+    - host: home.lab
+      http:
+        paths:
+          - path: /outpost.goauthentik.io
+            pathType: Prefix
+            backend:
+              service:
+                name: authentik-server
+                port:
+                  number: 80

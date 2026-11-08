@@ -1,0 +1,150 @@
+version: 1
+metadata:
+  name: homelab-proxy
+entries:
+  # Forward-auth (nginx auth_request) for UIs without their own login.
+  # Served by the embedded outpost inside authentik-server.
+  - model: authentik_providers_proxy.proxyprovider
+    identifiers:
+      name: Longhorn
+    id: longhorn-provider
+    attrs:
+      mode: forward_single
+      external_host: https://longhorn.home.lab
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-invalidation-flow]]
+
+  - model: authentik_providers_proxy.proxyprovider
+    identifiers:
+      name: Prometheus
+    id: prometheus-provider
+    attrs:
+      mode: forward_single
+      external_host: https://prometheus.home.lab
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-invalidation-flow]]
+
+  - model: authentik_providers_proxy.proxyprovider
+    identifiers:
+      name: Pi-hole
+    id: pihole-provider
+    attrs:
+      mode: forward_single
+      external_host: https://dns.home.lab
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-invalidation-flow]]
+
+  - model: authentik_providers_proxy.proxyprovider
+    identifiers:
+      name: Glance
+    id: glance-provider
+    attrs:
+      mode: forward_single
+      external_host: https://home.lab
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-invalidation-flow]]
+
+  - model: authentik_core.application
+    identifiers:
+      slug: glance
+    id: glance-app
+    attrs:
+      name: Inicio
+      slug: glance
+      provider: !KeyOf glance-provider
+      meta_launch_url: https://home.lab
+      meta_icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/glance.svg
+      meta_description: Página de inicio del homelab
+      policy_engine_mode: any
+
+  - model: authentik_core.application
+    identifiers:
+      slug: longhorn
+    id: longhorn-app
+    attrs:
+      name: Longhorn
+      slug: longhorn
+      provider: !KeyOf longhorn-provider
+      meta_launch_url: https://longhorn.home.lab
+      meta_icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/longhorn.svg
+      policy_engine_mode: any
+
+  - model: authentik_core.application
+    identifiers:
+      slug: prometheus
+    id: prometheus-app
+    attrs:
+      name: Prometheus
+      slug: prometheus
+      provider: !KeyOf prometheus-provider
+      meta_launch_url: https://prometheus.home.lab
+      meta_icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/prometheus.svg
+      policy_engine_mode: any
+
+  - model: authentik_core.application
+    identifiers:
+      slug: pihole
+    id: pihole-app
+    attrs:
+      name: Pi-hole
+      slug: pihole
+      provider: !KeyOf pihole-provider
+      meta_launch_url: https://dns.home.lab/admin/
+      meta_icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/pi-hole.svg
+      policy_engine_mode: any
+
+  # Admins only
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf longhorn-app
+      group: !Find [authentik_core.group, [name, homelab-admins]]
+    attrs:
+      order: 0
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf prometheus-app
+      group: !Find [authentik_core.group, [name, homelab-admins]]
+    attrs:
+      order: 0
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf pihole-app
+      group: !Find [authentik_core.group, [name, homelab-admins]]
+    attrs:
+      order: 0
+
+  # Start page: every homelab group
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf glance-app
+      group: !Find [authentik_core.group, [name, homelab-admins]]
+    attrs:
+      order: 0
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf glance-app
+      group: !Find [authentik_core.group, [name, homelab-users]]
+    attrs:
+      order: 1
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf glance-app
+      group: !Find [authentik_core.group, [name, homelab-readonly]]
+    attrs:
+      order: 2
+
+  # Attach providers to the embedded outpost (config left as-is:
+  # authentik_host is already https://identity.home.lab)
+  - model: authentik_outposts.outpost
+    identifiers:
+      managed: goauthentik.io/outposts/embedded
+    attrs:
+      providers:
+        - !KeyOf longhorn-provider
+        - !KeyOf prometheus-provider
+        - !KeyOf pihole-provider
+        - !KeyOf glance-provider
