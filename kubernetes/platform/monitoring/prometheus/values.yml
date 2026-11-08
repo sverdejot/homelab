@@ -15,13 +15,22 @@ server:
         hosts:
           - prometheus.home.lab
 
+  retention: 3d
+
   persistentVolume:
-    size: 20Gi
+    size: 5Gi
 
 
 alertmanager:
-  persistance:
+  persistence:
     size: 256Mi
+
+scrapeConfigs:
+  kubernetes-api-servers:
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: .+_bucket
+        action: drop
 
 # Headers for the nginx auth subrequest (authentik forward-auth, referenced by
 # server.ingress auth-proxy-set-headers): the embedded outpost routes by host.
