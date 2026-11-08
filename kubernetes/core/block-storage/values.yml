@@ -1,6 +1,9 @@
 longhornUI:
   replicas: 1
 
+defaultSettings:
+  replicaAutoBalance: best-effort
+
 ingress:
   enabled: true
   ingressClassName: nginx
