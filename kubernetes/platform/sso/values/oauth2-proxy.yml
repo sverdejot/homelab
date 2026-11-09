@@ -20,6 +20,8 @@ config:
     cookie_secure = true
     cookie_samesite = "lax"
     reverse_proxy = true
+    # only ingress-nginx pods (k3s default pod CIDR) may set X-Forwarded-*
+    trusted_proxy_ips = [ "10.42.0.0/16" ]
     set_xauthrequest = true
     skip_provider_button = true
     # internal homelab CA (trust-manager Bundle custom-ca-bundle)
