@@ -6,7 +6,7 @@ metadata:
     labels:
         app: homebox
 stringData:
-    client-secret: ENC[AES256_GCM,data:4KHeRMaK1bwlWo4mRfON8H5BardYwsu8OvZJ6db66ORNL2Th,iv:Ft5SgHOUeIX3JH1FQ8aQAzdAYtAOxNzP2kcT5IO235U=,tag:gLJ+v8UtriZJYBs2ZvM0eg==,type:str]
+    client-secret: ENC[AES256_GCM,data:chJP5N19aXu5oBakmjGLhf1LGktzAHDtdFINMv0YuRY=,iv:tTnDBrnd0+jBX98OzIt6E4L7DAD9tlVRN86StYN4yKk=,tag:sqiM73/IFtK31gVtpv93cw==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -22,8 +22,8 @@ sops:
             VkxWR2NTS005ck8vT2NVNmNQMVZuWmsK5VYD+CNjVwHkdAXX6X6dgji+i4TIgwhk
             eCW2wNpOcfUjTEkcxg4iQ31pbabKIfZ8JEFwjXs+3o7DkA/rQwdQhw==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-11-09T14:20:02Z"
-    mac: ENC[AES256_GCM,data:fsp5hyvBOL4qbVyVylULpfLJHYQ07IRSidBLiIj8SW8alsR9axIdEsTcErQJr4VHG4yck/0DAExOz6NsD69443q/Im5mYiEDVIqIcn3+9J79nmXG+4NczqeXcH6gOjj/phtStbrr2bVqlVCswD4Uf7ttTIjDJxwgjL0uVHBosUo=,iv:jf2x9Q43RgmqNj/V1mDQk928fX1Qo46Zt7mhrBoCmqI=,tag:sqKuBB8DjSDL06Tp2dEXtA==,type:str]
+    lastmodified: "2026-11-09T14:35:43Z"
+    mac: ENC[AES256_GCM,data:7r9jUqrqsmYg7kdPQDP97c8lk3cyOPFDSaWu9BqGJNeHLoKFSzb+Wurjg7tGogbCzSqC+jlSmjSP2sfD9m/CN2gtxbbppMErHPV050qAPosiTV2EmQ8Hj2afj1cDYQg7CtiRIMx622WNmuBi1ZleeuKF3lDRBkRVYAFHoYhXqtE=,iv:LLs2KOVCSa8dGSVFnqz3AJCtHAZ6xT7FxsCeKJJf41s=,tag:Oxc6SL2mHnd6PpWJHK6JVg==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
     version: 3.9.2
