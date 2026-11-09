@@ -113,11 +113,10 @@ pages:
                 url: https://dns.home.lab/admin/
                 check-url: http://pihole-web.pihole-system.svc.cluster.local/admin/login.php
                 icon: di:pi-hole
-              - title: authentik
-                url: https://identity.home.lab
-                check-url: http://authentik-server.authentik.svc.cluster.local/-/health/live/
-                icon: di:authentik
-                timeout: 6s
+              - title: Pocket ID
+                url: https://auth.home.lab
+                check-url: http://pocket-id.pocket-id.svc.cluster.local/healthz
+                icon: di:pocket-id
 
       - size: small
         widgets:
