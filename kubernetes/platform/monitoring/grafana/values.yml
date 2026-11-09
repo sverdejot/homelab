@@ -21,7 +21,7 @@ envFromSecret: grafana-oidc-secret
 plugins:
   - volkovlabs-echarts-panel 7.2.5
 
-# Internal homelab CA (trust-manager Bundle) for the backchannel calls to authentik
+# Internal homelab CA (trust-manager Bundle) for the backchannel calls to Pocket ID
 extraConfigmapMounts:
   - name: homelab-ca
     configMap: custom-ca-bundle
@@ -33,17 +33,17 @@ grafana.ini:
     home_page: /dashboards
   auth:
     disable_login_form: false # break-glass local admin
-    signout_redirect_url: https://identity.home.lab/application/o/grafana/end-session/
+    signout_redirect_url: https://auth.home.lab/api/oidc/end-session
   auth.anonymous:
     enabled: false
   auth.generic_oauth:
     enabled: true
-    name: Authentik
+    name: Pocket ID
     client_id: grafana
-    scopes: openid profile email
-    auth_url: https://identity.home.lab/application/o/authorize/
-    token_url: https://identity.home.lab/application/o/token/
-    api_url: https://identity.home.lab/application/o/userinfo/
+    scopes: openid profile email groups
+    auth_url: https://auth.home.lab/authorize
+    token_url: https://auth.home.lab/api/oidc/token
+    api_url: https://auth.home.lab/api/oidc/userinfo
     use_pkce: true
     allow_sign_up: true
     login_attribute_path: preferred_username
