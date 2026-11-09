@@ -44,7 +44,7 @@ spec:
         fsGroup: 1000
         runAsNonRoot: true
       # Build a CA bundle = system roots + homelab internal CA (trust-manager
-      # Bundle `custom-ca-bundle`), so SSO discovery against identity.home.lab
+      # Bundle `custom-ca-bundle`), so SSO discovery against auth.home.lab
       # verifies TLS while public endpoints (icons, HIBP, push) keep working.
       initContainers:
         - name: ca-bundle
@@ -83,14 +83,15 @@ spec:
               value: "false"
             - name: PASSWORD_HINTS_ALLOWED
               value: "false"
-            # SSO via authentik (master password login kept as fallback)
+            # SSO via Pocket ID (master password login kept as fallback).
+            # Needs "Emails verified" enabled in Pocket ID, or Vaultwarden refuses to link accounts.
             - name: SSO_ENABLED
               value: "true"
             - name: SSO_ONLY
               value: "false"
-            # Must match the issuer exactly (trailing slash included)
+            # Must match the issuer exactly (Pocket ID: APP_URL, no trailing slash)
             - name: SSO_AUTHORITY
-              value: https://identity.home.lab/application/o/vaultwarden/
+              value: https://auth.home.lab
             - name: SSO_CLIENT_ID
               value: vaultwarden
             - name: SSO_SCOPES
