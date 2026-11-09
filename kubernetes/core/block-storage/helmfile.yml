@@ -9,7 +9,3 @@ releases:
     chart: longhorn/longhorn
     values:
       - ./values.yml
-    hooks:
-      - events: ["postsync"]
-        command: kubectl
-        args: ["apply", "-f", "forward-auth-headers.yml"]
