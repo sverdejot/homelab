@@ -102,7 +102,7 @@ Insert agent SD cards and power on. Each agent joins the cluster at `192.168.10.
 
 ```bash
 mise run k8s:sync core        # MetalLB, cert-manager, nginx, longhorn
-mise run k8s:sync platform    # ArgoCD, linkerd, grafana, prometheus, authentik
+mise run k8s:sync platform    # ArgoCD, linkerd, grafana, prometheus, pocket-id, oauth2-proxy
 mise run k8s:sync apps        # gitea, n8n, umami, pihole, registry, ...
 ```
 

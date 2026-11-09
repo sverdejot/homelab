@@ -614,14 +614,14 @@
     {
       "type": "timeseries",
       "title": "RAM",
-      "description": "Apps: el resto. Plataforma: argocd, authentik, cert-manager, grafana, prometheus, cnpg-system, postgres. Infraestructura: longhorn-system, metallb-system, ingress-nginx, kube-system, pihole-system.",
+      "description": "Apps: el resto. Plataforma: argocd, pocket-id, oauth2-proxy, cert-manager, grafana, prometheus, cnpg-system, postgres. Infraestructura: longhorn-system, metallb-system, ingress-nginx, kube-system, pihole-system.",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum by (grupo) (label_replace(label_replace(label_replace(sum by (namespace) (container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\"))",
+          "expr": "sum by (grupo) (label_replace(label_replace(label_replace(sum by (namespace) (container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|pocket-id|oauth2-proxy|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\"))",
           "legendFormat": "{{grupo}}",
           "refId": "A",
           "range": true,
@@ -735,7 +735,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "1000 * sum by (grupo) (label_replace(label_replace(label_replace(sum by (namespace) (rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[$__rate_interval])), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\"))",
+          "expr": "1000 * sum by (grupo) (label_replace(label_replace(label_replace(sum by (namespace) (rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[$__rate_interval])), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|pocket-id|oauth2-proxy|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\"))",
           "legendFormat": "{{grupo}}",
           "refId": "A",
           "range": true,
@@ -863,7 +863,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "label_replace(label_replace(label_replace(sum by (namespace) (container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "expr": "label_replace(label_replace(label_replace(sum by (namespace) (container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|pocket-id|oauth2-proxy|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
           "legendFormat": "",
           "refId": "A",
           "instant": true,
@@ -875,7 +875,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "label_replace(label_replace(label_replace(1000 * sum by (namespace) (rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[5m])), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "expr": "label_replace(label_replace(label_replace(1000 * sum by (namespace) (rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[5m])), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|pocket-id|oauth2-proxy|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
           "legendFormat": "",
           "refId": "B",
           "instant": true,
@@ -887,7 +887,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "label_replace(label_replace(label_replace(sum by (namespace) (kube_pod_container_resource_requests{resource=\"memory\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "expr": "label_replace(label_replace(label_replace(sum by (namespace) (kube_pod_container_resource_requests{resource=\"memory\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|pocket-id|oauth2-proxy|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
           "legendFormat": "",
           "refId": "C",
           "instant": true,
@@ -899,7 +899,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "label_replace(label_replace(label_replace(sum by (namespace) (kube_pod_container_resource_limits{resource=\"memory\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "expr": "label_replace(label_replace(label_replace(sum by (namespace) (kube_pod_container_resource_limits{resource=\"memory\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|pocket-id|oauth2-proxy|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
           "legendFormat": "",
           "refId": "D",
           "instant": true,
@@ -911,7 +911,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "label_replace(label_replace(label_replace(1000 * sum by (namespace) (kube_pod_container_resource_requests{resource=\"cpu\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "expr": "label_replace(label_replace(label_replace(1000 * sum by (namespace) (kube_pod_container_resource_requests{resource=\"cpu\",namespace=~\"$namespace\"}), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|pocket-id|oauth2-proxy|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
           "legendFormat": "",
           "refId": "E",
           "instant": true,
@@ -923,7 +923,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "label_replace(label_replace(label_replace(count by (namespace) (kube_pod_info{namespace=~\"$namespace\"} * on (namespace, pod) group_left () (kube_pod_status_phase{phase=\"Running\"} == 1)), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "expr": "label_replace(label_replace(label_replace(count by (namespace) (kube_pod_info{namespace=~\"$namespace\"} * on (namespace, pod) group_left () (kube_pod_status_phase{phase=\"Running\"} == 1)), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|pocket-id|oauth2-proxy|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
           "legendFormat": "",
           "refId": "F",
           "instant": true,
@@ -935,7 +935,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "label_replace(label_replace(label_replace(sum by (namespace) (round(increase(kube_pod_container_status_restarts_total{namespace=~\"$namespace\"}[$__range]))), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|authentik|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
+          "expr": "label_replace(label_replace(label_replace(sum by (namespace) (round(increase(kube_pod_container_status_restarts_total{namespace=~\"$namespace\"}[$__range]))), \"grupo\", \"Apps\", \"namespace\", \".*\"), \"grupo\", \"Plataforma\", \"namespace\", \"argocd|pocket-id|oauth2-proxy|cert-manager|grafana|prometheus|cnpg-system|postgres\"), \"grupo\", \"Infraestructura\", \"namespace\", \"longhorn-system|metallb-system|ingress-nginx|kube-system|pihole-system\")",
           "legendFormat": "",
           "refId": "G",
           "instant": true,
