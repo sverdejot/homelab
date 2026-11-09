@@ -1,0 +1,61 @@
+# Single shared oauth2-proxy for nginx forward-auth. Protected ingresses use:
+#   nginx.ingress.kubernetes.io/auth-url: http://oauth2-proxy.oauth2-proxy.svc.cluster.local/oauth2/auth?allowed_groups=<g1>,<g2>
+#   nginx.ingress.kubernetes.io/auth-signin: https://oauth2.home.lab/oauth2/start?rd=$scheme://$host$escaped_request_uri
+# The session cookie is set on .home.lab, so one login covers every host.
+config:
+  # client-id, client-secret, cookie-secret (secrets/oauth2-proxy.yml)
+  existingSecret: oauth2-proxy
+  configFile: |-
+    provider = "oidc"
+    provider_display_name = "Pocket ID"
+    oidc_issuer_url = "https://auth.home.lab"
+    redirect_url = "https://oauth2.home.lab/oauth2/callback"
+    scope = "openid email profile groups"
+    oidc_groups_claim = "groups"
+    code_challenge_method = "S256"
+    email_domains = [ "*" ]
+    upstreams = [ "static://202" ]
+    cookie_domains = [ ".home.lab" ]
+    whitelist_domains = [ ".home.lab", "home.lab" ]
+    cookie_secure = true
+    cookie_samesite = "lax"
+    reverse_proxy = true
+    set_xauthrequest = true
+    skip_provider_button = true
+    # internal homelab CA (trust-manager Bundle custom-ca-bundle)
+    provider_ca_files = [ "/etc/homelab-ca/ca-bundle.crt" ]
+
+extraEnv:
+  - name: GOMEMLIMIT
+    value: 50MiB
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 64Mi
+
+extraVolumes:
+  - name: homelab-ca
+    configMap:
+      name: custom-ca-bundle
+
+extraVolumeMounts:
+  - name: homelab-ca
+    mountPath: /etc/homelab-ca
+    readOnly: true
+
+ingress:
+  enabled: true
+  className: nginx
+  path: /
+  pathType: Prefix
+  annotations:
+    cert-manager.io/cluster-issuer: certificate-issuer
+  hosts:
+    - oauth2.home.lab
+  tls:
+    - secretName: oauth2-proxy-tls
+      hosts:
+        - oauth2.home.lab

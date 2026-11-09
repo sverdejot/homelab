@@ -1,0 +1,135 @@
+# Pocket ID: passkey-only OIDC provider. Clients, users and groups are managed
+# by hand in the UI (https://auth.home.lab/settings/admin).
+# Stateless pod: data in CNPG (DB_CONNECTION_STRING), uploads too (FILE_BACKEND=database).
+# APP_URL must never change: passkeys are bound to its domain.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pocket-id
+  namespace: pocket-id
+  labels:
+    app: pocket-id
+spec:
+  replicas: 1
+  # single instance runs DB migrations on start
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: pocket-id
+  template:
+    metadata:
+      labels:
+        app: pocket-id
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: pocket-id
+          image: ghcr.io/pocket-id/pocket-id:v2.19.2-distroless
+          env:
+            - name: APP_URL
+              value: https://auth.home.lab
+            # ingress-nginx pods (k3s default pod CIDR) set X-Forwarded-For
+            - name: TRUST_PROXY
+              value: 10.42.0.0/16
+            - name: FILE_BACKEND
+              value: database
+            - name: ALLOW_INSECURE_CALLBACK_URLS
+              value: "false"
+            - name: ANALYTICS_DISABLED
+              value: "true"
+            - name: GOMEMLIMIT
+              value: 100MiB
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: pocket-id
+                  key: encryption-key
+            - name: DB_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: pocket-id
+                  key: db-connection-string
+          ports:
+            - name: http
+              containerPort: 1411
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 10m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            # WORKDIR /app; relative data/ dir (GeoLite cache, temp files)
+            - name: data
+              mountPath: /app/data
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pocket-id
+  namespace: pocket-id
+  labels:
+    app: pocket-id
+spec:
+  selector:
+    app: pocket-id
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pocket-id
+  namespace: pocket-id
+  annotations:
+    cert-manager.io/cluster-issuer: certificate-issuer
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - auth.home.lab
+      secretName: pocket-id-tls
+  rules:
+    - host: auth.home.lab
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pocket-id
+                port:
+                  name: http

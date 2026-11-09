@@ -1,16 +1,20 @@
 ---
 repositories:
-  - name: authentik
-    url: https://charts.goauthentik.io
+  - name: oauth2-proxy
+    url: https://oauth2-proxy.github.io/manifests
 ---
 releases:
-  - name: authentik
-    namespace: authentik
-    chart: authentik/authentik
-    version: 2026.8.5
+  # Shared forward-auth for UIs without their own login (Longhorn, Prometheus,
+  # Pi-hole, Glance). OIDC client of Pocket ID; see values/oauth2-proxy.yml.
+  - name: oauth2-proxy
+    namespace: oauth2-proxy
+    chart: oauth2-proxy/oauth2-proxy
+    version: 10.7.2
     values:
-      - ./values.yml
+      - ./values/oauth2-proxy.yml
     hooks:
+      # Pocket ID itself has no maintained chart: plain manifests.
+      # DB role lives in shared/cnpg (values.yml + auth/pocketid.yml).
       - events:
           - prepare
         showlogs: true
@@ -18,27 +22,7 @@ releases:
         args:
           - -c
           - |
-            kubectl create namespace authentik --dry-run=client -o yaml | kubectl apply -f -
-            sops -d secrets/authentik-auth.yml | kubectl apply -f -
-            sops -d secrets/secret-key.yml | kubectl apply -f -
-            sops -d secrets/oidc-clients.yml | kubectl apply -f -
-            kubectl create configmap authentik-blueprint-homelab -n authentik --from-file=blueprints/ --dry-run=client -o yaml | kubectl apply -f -
-      - events:
-          - prepare
-        showlogs: true
-        command: sh
-        args:
-          - -c
-          - |
-            sops -d secrets/postgres.yml | kubectl apply -f -
-            kubectl apply -f resources/postgres.yml -f resources/ingress.yml -f resources/outpost-ingress.yml
-      - events:
-          - postsync
-        showlogs: true
-        command: sh
-        args:
-          - -c
-          - |
-            kubectl wait --for=condition=ready pod -l app.kubernetes.io/component=server -n authentik --timeout=300s
-            POD=$(kubectl get pods -n authentik -l app.kubernetes.io/component=server -o jsonpath='{.items[0].metadata.name}')
-            kubectl exec -n authentik $POD -- sh -c 'for f in /blueprints/homelab/*.yaml; do ak apply_blueprint "homelab/$(basename "$f")" || exit 1; done'
+            kubectl create namespace pocket-id --dry-run=client -o yaml | kubectl apply -f -
+            kubectl create namespace oauth2-proxy --dry-run=client -o yaml | kubectl apply -f -
+            for f in secrets/*.yml; do sops -d "$f" | kubectl apply -f -; done
+            kubectl apply -f resources/

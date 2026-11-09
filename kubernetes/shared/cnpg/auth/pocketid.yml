@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: pocketid
+    namespace: postgres
+    labels:
+        app: pocket-id
+        cnpg.io/reload: "true"
+type: kubernetes.io/basic-auth
+stringData:
+    username: ENC[AES256_GCM,data:8VTrtl1MlWY=,iv:2+9CHRMNHTJXyIw5JX2L1oMcdsf5PTVW3rrt9Vzygpo=,tag:Vjqz2vvdfNRpr2xHjy3fpw==,type:str]
+    password: ENC[AES256_GCM,data:zn1H818JoA9SUAi+Q1/zwtz5O7VGhlzYcDHvar5XQ3plwWMbTYeLwYKKSAcMDAKc,iv:NXQINC/2/wMJSFGdFOjuYBMVBQZ6mpRtF0B/t9aLcEY=,tag:XKmuK4J8inBYYxz/fXJY8Q==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSByRHlWU2dQRjZhYkZQUVJY
+            V0luQS8vejBRNjk1cHNtem1udTkzWXVvbjNZCnBFR0xxMmNWZEpTclkwNHQyYVBr
+            S1hSSHdOZURvSHRqcXNESmh5V2RSYmMKLS0tIDAva0ExcHdjMTRmRTNqQ2drR0I3
+            Vnl2cGg5MWxiejlJS0c5U3FjNjVMVkEK0bzMTIvVkNCk/w13hIaNFGTdYnqB/G42
+            BTce+IWPMX4aLhkq12ATTMpcWKKfkD56d/1la7ExdKpR42+U0zBicQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-11-09T14:18:33Z"
+    mac: ENC[AES256_GCM,data:2n6elS3f+wFcNk5k3v/lzU8BoRUsxR7Pdq2Dsq07kI2fPnzSp8vo0yE84eGXJ4jkqdceLeDJbm/qyT8WSuM5992CWj62qTOTrQR5cw0Iy2hveALORmPFvGMY/bctYRBUldh1WCMcNH175trk6KDR35Ce5gji4T5vOhjI9FVnWGs=,iv:Z4XFQYUVcTjTACQeMT/jQnLWplXeRCQElcXHBbEcvqw=,tag:PK16dzXG1OT+C6b9oxAynw==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2
