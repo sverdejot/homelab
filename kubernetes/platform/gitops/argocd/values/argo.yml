@@ -11,11 +11,11 @@ configs:
   cm:
     url: https://argo.home.lab
     oidc.config: |
-      name: Authentik
-      issuer: https://identity.home.lab/application/o/argocd/
+      name: Pocket ID
+      issuer: https://auth.home.lab
       clientID: argocd
-      # resolved from Secret argocd-oidc-authentik (secrets/oidc-authentik.yml)
-      clientSecret: $argocd-oidc-authentik:clientSecret
+      # resolved from Secret argocd-oidc (secrets/oidc.yml)
+      clientSecret: $argocd-oidc:clientSecret
       requestedScopes: ["openid", "profile", "email", "groups"]
       # internal homelab CA (trust-manager Bundle custom-ca-bundle)
       rootCA: |

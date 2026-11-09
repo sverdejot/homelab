@@ -19,7 +19,7 @@ releases:
           - -c
           - |
             kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
-            sops -d secrets/oidc-authentik.yml | kubectl apply -f -
+            sops -d secrets/oidc.yml | kubectl apply -f -
 
   - name: argocd-image-updates
     namespace: argocd
