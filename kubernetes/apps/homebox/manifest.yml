@@ -76,18 +76,18 @@ spec:
             # Accounts are provisioned on first OIDC login; no self sign-up.
             - name: HBOX_OPTIONS_ALLOW_REGISTRATION
               value: "false"
-            # Local credentials kept as break-glass if authentik is down.
+            # Local credentials kept as break-glass if Pocket ID is down.
             - name: HBOX_OPTIONS_ALLOW_LOCAL_LOGIN
               value: "true"
             - name: HBOX_OPTIONS_TRUST_PROXY
               value: "true"
             - name: HBOX_OPTIONS_HOSTNAME
               value: homebox.home.lab
-            # SSO via authentik (blueprints/homebox.yaml)
+            # SSO via Pocket ID (client `homebox`, created in the Pocket ID UI)
             - name: HBOX_OIDC_ENABLED
               value: "true"
             - name: HBOX_OIDC_ISSUER_URL
-              value: https://identity.home.lab/application/o/homebox/
+              value: https://auth.home.lab
             - name: HBOX_OIDC_CLIENT_ID
               value: homebox
             - name: HBOX_OIDC_CLIENT_SECRET
@@ -96,11 +96,11 @@ spec:
                   name: homebox-oidc
                   key: client-secret
             - name: HBOX_OIDC_SCOPE
-              value: openid profile email
+              value: openid profile email groups
             - name: HBOX_OIDC_ALLOWED_GROUPS
               value: homelab-admins,homelab-users
             - name: HBOX_OIDC_BUTTON_TEXT
-              value: Sign in with authentik
+              value: Sign in with Pocket ID
             # Trust the internal CA (trust-manager Bundle custom-ca-bundle) for
             # OIDC discovery; system roots stay available via SSL_CERT_DIR.
             - name: SSL_CERT_FILE
