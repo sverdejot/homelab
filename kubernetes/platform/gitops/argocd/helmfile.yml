@@ -7,7 +7,7 @@ releases:
   - name: argocd
     namespace: argocd
     chart: argo/argo-cd
-    version: 10.17.1
+    version: 10.18.0
     values:
       - ./values/argo.yml
     hooks:
