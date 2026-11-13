@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: audiobookshelf-oidc
+    namespace: audiobookshelf
+    labels:
+        app: audiobookshelf
+stringData:
+    client-secret: ENC[AES256_GCM,data:JQkk0z1jG6y6s8x+UtjD/vrsOgbB+IwQrcSqL/OoyBc=,iv:JqT3VREjatEVxeIEdB0ANmUT4hPWL1Z3ycqcy2l30vU=,tag:mt6slpWK8D/hnHrouedANw==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBpaE1XY2hYSHJONWFLRng1
+            MWRlSjgyL1R2QW1WVXRuWHZ3MU90QThjaG1vCnpSaDZ6MXIyTW5qQXloM3Z5cmRw
+            dERXQjdnQk9vWGhCQXhjVHlIUktKbEUKLS0tIGRCS0o1VndVNFRyY0JVazJjSVVY
+            VjVCVnZ6NDZtT2t0NTFBWTVZSFRjZk0K38CIq0Y/ZahDJo2LJfy8Mxc6n9b4bk4Q
+            PtsX4tZ/JYHvbE06uqouPAQB44xtLYqpqfbpABVLPApYHf85ZflJYA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-11-13T19:56:19Z"
+    mac: ENC[AES256_GCM,data:6YQoT2NFDT1+1Sv6ugDFKkxvQ0aqN6IbhYjhgWtyTi39uCN/1aC0Oy/UIC+wEoQmm+GflCS52n3xF1ENYkwSDD65Rk/v//d795Ci4XYQw6pyVygK1eqKGgVRHFYrVD8wG4FjIzjZsf41nU+iz0m/JcyhosHVCdn3b2LABoi4yFA=,iv:paTFtUGieubtdZ5lBBPdLzYglcb3lgJenP4OJgNqwjA=,tag:5g5LrpZmu8UZMpXRR+F9kw==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2
