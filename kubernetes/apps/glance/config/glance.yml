@@ -88,6 +88,10 @@ pages:
                 url: https://n8n.home.lab
                 check-url: http://n8n-svc.n8n.svc.cluster.local:5678/healthz
                 icon: di:n8n
+              - title: Miniflux
+                url: https://rss.home.lab
+                check-url: http://miniflux-svc.miniflux.svc.cluster.local:8080/healthcheck
+                icon: di:miniflux
 
           - type: monitor
             title: Plataforma
@@ -117,6 +121,25 @@ pages:
                 url: https://auth.home.lab
                 check-url: http://pocket-id.pocket-id.svc.cluster.local/healthz
                 icon: di:pocket-id
+
+          # Latest headlines; Miniflux (rss.home.lab) is where they get read.
+          # Fetched directly from the sources, so Miniflux block rules don't apply.
+          - type: rss
+            title: Lecturas
+            title-url: https://rss.home.lab/unread
+            style: detailed-list
+            cache: 30m
+            limit: 10
+            collapse-after: 5
+            feeds:
+              - url: https://feeds.feedburner.com/ThePragmaticEngineer
+                title: Pragmatic Engineer
+              - url: https://blog.bytebytego.com/feed
+                title: ByteByteGo
+              - url: https://newsletter.kentbeck.com/feed
+                title: Tidy First?
+              - url: https://selfh.st/rss/
+                title: selfh.st
 
       - size: small
         widgets:
