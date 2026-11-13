@@ -122,8 +122,6 @@ pages:
                 check-url: http://pocket-id.pocket-id.svc.cluster.local/healthz
                 icon: di:pocket-id
 
-          # Latest headlines; Miniflux (rss.home.lab) is where they get read.
-          # Fetched directly from the sources, so Miniflux block rules don't apply.
           - type: rss
             title: Lecturas
             title-url: https://rss.home.lab/unread
