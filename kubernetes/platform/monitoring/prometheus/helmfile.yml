@@ -7,7 +7,7 @@ releases:
   - name: prometheus
     namespace: prometheus
     chart: prometheus-community/prometheus
-    version: 29.47.0
+    version: 29.47.2
     values:
       - ./values.yml
     hooks:
