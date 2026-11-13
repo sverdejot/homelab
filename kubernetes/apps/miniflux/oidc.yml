@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: miniflux-oidc
+    namespace: miniflux
+    labels:
+        app: miniflux
+stringData:
+    client-secret: ENC[AES256_GCM,data:8YuRgBtOo4M3KDYblJRv0YX+JIStQ+002Spm/yGHQ6U=,iv:6d5MJYz6FG+fHzF94gcyWSvxroNRXRM70ICoMd+iaqc=,tag:U5TXK9JVEJ9zRhJwkFdnTQ==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCNmEwaTY3MThFak5CZ3cr
+            OVdGR0Q4VHlXMGhEZnJkR2puYmdpOTRpalFzCmJnWWlJaUdCTDBmRUc1R2xzeHJK
+            UE5iY0JRcGtiV2ZUcVRlYzdIZ2kyWmMKLS0tIEFBQVMzMW9kR2ZBelJTQXRVOW9F
+            RG9hRTYyNnlMSVY4aHE3eUtLY3RRR2MK5BBZsGSbXyPlJdQ030sS0PbNdnaGFmGX
+            NN2xU8pkGROYbsWkMn6ukYDUNW1MfjvhAHNVYXuqlpqM+OVnCvjjGA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-11-13T18:42:33Z"
+    mac: ENC[AES256_GCM,data:GnZ5tv76p3ErGTW8pT570kJT1BTyTR0S4LWipj8FtNB8KJGTtafFHgWi5SlhpID1KMJhS7Ls7RwCqNBYBdR7uc4YP1QrNOxdmlaVUJzJeyibTyOkwDxjuI/PYfX8zp44yFrtWZmUvrlozIMv062l79AZo+uDi72VZPk+Jwe594M=,iv:WEyFQWg30yd7SJaUNg469sM7B2wT6rNnysDlPChbhYI=,tag:6Qs3FwQGxbROnBE4BvJBDA==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2

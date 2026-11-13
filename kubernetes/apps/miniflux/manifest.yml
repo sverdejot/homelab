@@ -4,7 +4,6 @@ kind: Namespace
 metadata:
   name: miniflux
 ---
-# Stateless: feeds and entries live in CNPG.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,7 +38,6 @@ spec:
                   key: database-url
             - name: RUN_MIGRATIONS
               value: "1"
-            # Admin bootstrapped on startup (idempotent); local login only for now.
             - name: CREATE_ADMIN
               value: "1"
             - name: ADMIN_USERNAME
@@ -58,6 +56,27 @@ spec:
               value: 0.0.0.0:8080
             - name: POLLING_FREQUENCY
               value: "30"
+            - name: OAUTH2_PROVIDER
+              value: oidc
+            - name: OAUTH2_CLIENT_ID
+              value: miniflux
+            - name: OAUTH2_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: miniflux-oidc
+                  key: client-secret
+            - name: OAUTH2_REDIRECT_URL
+              value: https://rss.home.lab/oauth2/oidc/callback
+            - name: OAUTH2_OIDC_DISCOVERY_ENDPOINT
+              value: https://auth.home.lab
+            - name: OAUTH2_OIDC_PROVIDER_NAME
+              value: Pocket ID
+            - name: OAUTH2_USER_CREATION
+              value: "0"
+            - name: SSL_CERT_FILE
+              value: /etc/homelab-ca/ca-bundle.crt
+            - name: SSL_CERT_DIR
+              value: /etc/ssl/certs
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -77,6 +96,14 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: homelab-ca
+              mountPath: /etc/homelab-ca
+              readOnly: true
+      volumes:
+        - name: homelab-ca
+          configMap:
+            name: custom-ca-bundle
       restartPolicy: Always
 ---
 apiVersion: v1
