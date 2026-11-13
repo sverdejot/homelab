@@ -3,3 +3,4 @@
 *.img
 .opencode
 .DS_Store
+*.plain.yml
