@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: garage-key-n8n-podcast
+    namespace: garage
+    labels:
+        app: garage
+stringData:
+    access-key-id: ENC[AES256_GCM,data:ufQaSdK2Y9Cx3Q9OpFdb+bT1eP6ndSHm26Y=,iv:eJ7cvoi7s3ZRJ7ic/0XPa380BsU/AKVvqmmiw/hpNFA=,tag:8845lvdywNeQsAy7ZY1ncA==,type:str]
+    secret-access-key: ENC[AES256_GCM,data:U1airqVWZKXtnaW13vAv/JXIFslmYioc2znG6LAo+dKdoGXzPfOfpU4pgVscwrd+Ym0ST+HIBN8UHnX/PhV2FQ==,iv:G61eurbA4NfrBnruy/5tu04tlOJXaWc40PlJf9DeAfs=,tag:6CNNJA5pujevJdyxCZLtAA==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3WTZOcWM2blJxNTRkNnFI
+            VXRvbFMxUjJGQ3lDdVBSRm5KRG5GSTZxL2pjCmw3UnVCTm9xejBTNU02MmhkbHc2
+            OEhNeCttQmd3R3RFb2M5eGlBcXJLYzAKLS0tIEdsMSsyZG1pZGFieEo0ek9laGdE
+            NExQaEx6YzNGaGQ2QlRBY1RiV2hEem8KTCc+XB6SiROC9hu6XzCL7gz99W8kMacU
+            i6c7YtMSf9YYxNgmC2QNIMUmCncsPc8A5NmBWBbrGj/G9RgZBPWa0g==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-11-13T19:56:19Z"
+    mac: ENC[AES256_GCM,data:vj8xbYj6a3H+S+yZxWeB48gs43WfMTmsqaogS0WbCm8aeeqHd+QrOvEuNhdt0mjEfP3WIH7N4b/zVXaHJd1v14h7/EMwpLwojIWvNdmUb8ns9FlVYPtwqlc6ZrP/0iJ73w4v/CtdPcfaEXZhgnJFfFzBSNlpphmiT7gzh6Pg1A4=,iv:xzAbVZH3brBN7PbbUxgZas/1G4IecfGgdheEjlWayR8=,tag:Jm3yGiN7mgp2Z4QCI8gcnw==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2
