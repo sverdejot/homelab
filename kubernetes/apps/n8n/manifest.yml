@@ -87,6 +87,10 @@ spec:
             # Trust the internal CA so workflows can call *.home.lab services.
             - name: NODE_EXTRA_CA_CERTS
               value: /etc/homelab-ca/ca-bundle.crt
+            - name: NODE_FUNCTION_ALLOW_BUILTIN
+              value: fs
+            - name: NODE_FUNCTION_ALLOW_EXTERNAL
+              value: "@resvg/resvg-wasm"
           ports:
             - containerPort: 5678
           readinessProbe:
@@ -111,6 +115,9 @@ spec:
             - name: homelab-ca
               mountPath: /etc/homelab-ca
               readOnly: true
+            - name: podcast-assets
+              mountPath: /home/node/podcast-assets
+              readOnly: true
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -118,6 +125,9 @@ spec:
         - name: homelab-ca
           configMap:
             name: custom-ca-bundle
+        - name: podcast-assets
+          configMap:
+            name: podcast-cover-assets
       restartPolicy: Always
 ---
 apiVersion: v1
