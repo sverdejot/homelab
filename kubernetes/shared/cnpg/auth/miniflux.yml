@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: miniflux
+    namespace: postgres
+    labels:
+        app: miniflux
+        cnpg.io/reload: "true"
+stringData:
+    username: ENC[AES256_GCM,data:0K3bIavzRKk=,iv:EKp5UgO0376ettMA21HgTIekfmenh/WHDd6Uqu+GGqM=,tag:w4S6NJKQqYSbffcFsEr3Ow==,type:str]
+    password: ENC[AES256_GCM,data:u3hx22kiIfiaHT7OEbT5M50ERdbh9z+W/0aCeScHNZL4Q+RT9jlI+7GKF9HRqI7B,iv:cFcYPmNUNJ6FD3hFwwFrj9KswRYnhWzVtLfgBUeK4BQ=,tag:tgX3Z7L4MdtOTL9sE6rWlg==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPNHpHaFVQS3lNWTMxN2pw
+            aWUxbVlUejAyZ1BENUhKRENtUVlEdk9ZQ1M0CkUraWtmNzFGWDJYLzdVR2F1UE5x
+            WXFkZTdvUWt4TUxMVGNYMzJLZmI5ZW8KLS0tIGRTQnJvUU0yanZnSHpIcE0vaytR
+            NjRpcnRFS0lPeEdSNEZERUEvVHRrNFkK3WtncLMIruFvjh9Ghyj9TuH98b5RonzY
+            yQKXmG3BzgSTsMhEyMQZTdohM2El6vm3OmpD8cjbMubjTBeY+fKAqA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-11-12T00:21:28Z"
+    mac: ENC[AES256_GCM,data:kEBKyI/bFoF+hyoDjytb6EsrD9JMXgz2RjpAXQa1eWoyoTx0leIKKA2jzoLFyoShPUyDwz6JfGJ5EO/EkNDLlcuJ+gXeY4jbAP1AquAOfYC7WoiwGoPlhSUy3ur/1V2FJ7ym1xnKToHIRQ93bsXEUZPLM2H5CYKQ784PuUiDY40=,iv:t82gErU3NK5/4wJMbvzpI8itNknVDuYv3JxYT21/eFw=,tag:w9PynMtqnvpEJrFUJ87FIg==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2

@@ -36,6 +36,14 @@ cluster:
       superuser: false
       passwordSecret:
         name: homebox
+    - name: miniflux
+      ensure: present
+      comment: Miniflux - RSS reader
+      login: true
+      createdb: false
+      superuser: false
+      passwordSecret:
+        name: miniflux
     - name: pocketid
       ensure: present
       comment: Pocket ID - Identity provider

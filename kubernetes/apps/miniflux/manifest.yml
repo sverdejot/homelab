@@ -1,0 +1,121 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: miniflux
+---
+# Stateless: feeds and entries live in CNPG.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: miniflux
+  name: miniflux
+  namespace: miniflux
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: miniflux
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: miniflux
+    spec:
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+      containers:
+        - name: miniflux
+          image: ghcr.io/miniflux/miniflux:2.3.5
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: miniflux-db-auth
+                  key: database-url
+            - name: RUN_MIGRATIONS
+              value: "1"
+            # Admin bootstrapped on startup (idempotent); local login only for now.
+            - name: CREATE_ADMIN
+              value: "1"
+            - name: ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: miniflux-admin
+                  key: username
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: miniflux-admin
+                  key: password
+            - name: BASE_URL
+              value: https://rss.home.lab
+            - name: LISTEN_ADDR
+              value: 0.0.0.0:8080
+            - name: POLLING_FREQUENCY
+              value: "30"
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 8080
+            initialDelaySeconds: 15
+          resources:
+            requests:
+              memory: "32Mi"
+            limits:
+              memory: "256Mi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: miniflux
+  name: miniflux-svc
+  namespace: miniflux
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: miniflux
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: miniflux-ingress
+  namespace: miniflux
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: certificate-issuer
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - rss.home.lab
+      secretName: rss-tls
+  rules:
+    - host: rss.home.lab
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: miniflux-svc
+                port:
+                  number: 8080

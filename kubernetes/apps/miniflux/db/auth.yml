@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: miniflux-db-auth
+    namespace: miniflux
+    labels:
+        app: miniflux
+stringData:
+    database-url: ENC[AES256_GCM,data:GamVFDJEWlzTLyaswgczqlgj46wAdF6vwX/uJ64QXMuijgUrIkBcwNQnzHZ+ZcFAR7MogikDF+r2cv8EXT9bCA0iygsw5vepNjbopZYAFDRbFclhd2WKj+XSPfSUFttapYroyhKS29JUB0X49mQ9Zp+SCDBGjAq5wyVybK1p2g==,iv:UwPGEtN8jV9vGYhu1UkyKJnlHfb6zd3/Om0hBQRwpLI=,tag:0F7xVnla8yBF38FIhPm/gw==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1sydzscuxes5gt386z9lvszf0unc793fd7rq6d4puum5xyqsud4hslach78
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBSSFkrdXpwTEIxK0tpa1RI
+            d2ROUVk4dUIwSC8waEIxOVZIcnc0K1pYeHhjCmZmK1pDMVpQck43YnluUWpjZVlD
+            ZWQvT2V4MmZrRkhsUFU4Tkh0dkpFa3cKLS0tIElKaGdKZURFNDVjNnNneDFaZEto
+            Y0J4ckRPRGprK0FJTWtMUHFRUnRiblkKGSIwQaLWpGGrZnaLfNZExJgz4EyWXkS+
+            5HKKSkIFe+f0lwrf55yvawSRYdNO43z4a0acWsqHFBgohkzk3Gq8Ww==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-11-12T00:21:28Z"
+    mac: ENC[AES256_GCM,data:nB3nh4CHlubNWLVxuVr/etZnGmESSmXDp0lCImJ8UlNMuAOeu/VLg/HNJ8KRsXxqu4Xtc1aC4qSYHYA4qN+rkPIoB+OW11QR/nYwmqkhLYdOr79Ctb/iZP7HxhtjNlo/B+Oj/sGG+hAbb3JcqdI73vmUleBpvoI8P8pTdc75kFQ=,iv:A/GuFhBxcmofJwMuQlwNom6h7IRdb2h14pXFFg0A5jM=,tag:ByKY6ZEHPO63Xg66b7CFbg==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.2
