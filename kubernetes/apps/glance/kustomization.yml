@@ -14,3 +14,4 @@ configMapGenerator:
       - assets/home.css
       - assets/avatar-dark.svg
       - assets/avatar-light.svg
+      - assets/app-icon.png

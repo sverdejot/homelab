@@ -13,6 +13,7 @@ branding:
   app-name: home.lab
   logo-url: /assets/avatar-dark.svg
   favicon-url: /assets/avatar-dark.svg
+  app-icon-url: /assets/app-icon.png
   app-background-color: "#282828"
   hide-footer: true
 
@@ -88,10 +89,52 @@ pages:
                 url: https://n8n.home.lab
                 check-url: http://n8n-svc.n8n.svc.cluster.local:5678/healthz
                 icon: di:n8n
+              - title: Maybe
+                url: https://finance.home.lab
+                check-url: http://maybe-svc.maybe.svc.cluster.local/up
+                icon: di:maybe
+              - title: Umami
+                url: https://analytics.home.lab
+                check-url: http://umami-svc.umami.svc.cluster.local:3000/api/heartbeat
+                icon: di:umami
               - title: Miniflux
                 url: https://rss.home.lab
                 check-url: http://miniflux-svc.miniflux.svc.cluster.local:8080/healthcheck
                 icon: di:miniflux
+              - title: Audiobookshelf
+                url: https://podcast.home.lab
+                check-url: http://audiobookshelf-svc.audiobookshelf.svc.cluster.local/healthcheck
+                icon: di:audiobookshelf
+
+          - type: monitor
+            title: Desarrollo
+            cache: 1m
+            sites:
+              - title: Gitea
+                url: https://git.home.lab
+                check-url: http://gitea-http.gitea.svc.cluster.local:3000/api/healthz
+                icon: di:gitea
+              - title: GitLab
+                url: https://gitlab.home.lab
+                check-url: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181/users/sign_in
+                icon: di:gitlab
+              - title: Registry
+                url: https://registry.home.lab/v2/
+                check-url: http://registry-svc.registry.svc.cluster.local:5000/v2/
+                alt-status-codes: [401]
+                icon: di:docker
+              - title: CloudBeaver
+                url: https://cloudbeaver.home.lab
+                check-url: http://cloudbeaver-svc.cloudbeaver.svc.cluster.local/cloudbeaver/
+                icon: di:cloudbeaver
+              - title: OpenClaw
+                url: https://openclaw.home.lab
+                check-url: http://openclaw-svc.openclaw.svc.cluster.local:18789/healthz
+                icon: di:openclaw
+              - title: Ollama
+                url: http://192.168.1.233:11434
+                check-url: http://ollama.ollama.svc.cluster.local:11434/
+                icon: di:ollama
 
           - type: monitor
             title: Plataforma
@@ -121,6 +164,11 @@ pages:
                 url: https://auth.home.lab
                 check-url: http://pocket-id.pocket-id.svc.cluster.local/healthz
                 icon: di:pocket-id
+              - title: Dashboard
+                url: https://dashboard.home.lab
+                check-url: https://dashboard-kong-proxy.dashboard.svc.cluster.local/
+                allow-insecure: true
+                icon: di:kubernetes-dashboard
 
           - type: rss
             title: Lecturas
